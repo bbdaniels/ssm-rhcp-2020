@@ -450,6 +450,18 @@
 	newpath
 	Lcr
 } def
+/Sbpa {
+	newpath
+} def
+/Sepa {
+	Slw setlinewidth
+	Slrgb setrgbcolor
+	currentlinejoin
+	1 setlinejoin
+	S
+	setlinejoin
+	newpath
+} def
 /Stransrot {
 	/anglep exch def
 	yratio mul
@@ -548,6 +560,7 @@
 /Slw 0.576 def
 /Slrgb {0.000 0.000 0.000} def
 /Slw 1.296 def
+Sbpa
 7579 12389 7632 12397 Sln
 7632 12397 7684 12405 Sln
 7684 12405 7736 12413 Sln
@@ -775,6 +788,8 @@
 23066 20822 23118 20892 Sln
 23118 20892 23170 20963 Sln
 23170 20963 23223 21034 Sln
+Sepa
+Sbpa
 11490 8787 11542 8795 Sln
 11542 8795 11595 8803 Sln
 11595 8803 11647 8812 Sln
@@ -1001,6 +1016,7 @@
 26977 17220 27029 17290 Sln
 27029 17290 27081 17361 Sln
 27081 17361 27133 17432 Sln
+Sepa
 24930 9188 0
 /Helvetica-0 findfont 646 yratio mul scalefont setfont
 (Andhra Pradesh) stringwidth pop add

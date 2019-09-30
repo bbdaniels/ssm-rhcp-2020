@@ -3,6 +3,8 @@
 cap prog drop weightab
 prog def weightab
 
+  version 15
+
 	syntax ///
 		anything 					/// Variables list
 		[using/] 					///	Output file for xlsx table
