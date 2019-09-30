@@ -1,5 +1,5 @@
 // M1 Household Survey
-use "${directory}/Data/Raw/Maqari1/Household_data2.dta" , clear
+use "${datadir}/Raw/Maqari1/Household_data2.dta" , clear
 
 	label var roof "Concrete or metal roof"
 	label var tv "Television"
@@ -13,12 +13,12 @@ use "${directory}/Data/Raw/Maqari1/Household_data2.dta" , clear
 
   replace statename = proper(statename)
 
-save "${directory}/Constructed/M1_households.dta" , replace
+hashdata using "${directory}/Constructed/M1_households.dta" ,  replace
 	use "${directory}/Constructed/M1_households.dta" , clear
 
 // M1 Private providers
 
-use "${directory}/Data/Raw/Maqari1/VillageProvider1.dta" ///
+use "${datadir}/Raw/Maqari1/VillageProvider1.dta" ///
   if provtype == 1 | provtype == 6, clear
   drop if s2q6 == 6 // Chemists
 
@@ -83,7 +83,7 @@ use "${directory}/Data/Raw/Maqari1/VillageProvider1.dta" ///
   // IRT
 
   merge 1:m finclinid_new finprovid_new ///
-    using "$directory/Data/Raw/Maqari1/Combined_vignettes3.dta" ///
+    using "${datadir}/Raw/Maqari1/Combined_vignettes3.dta" ///
     , keep(1 3)
 
 
@@ -120,19 +120,20 @@ use "${directory}/Data/Raw/Maqari1/VillageProvider1.dta" ///
 
 	// easyirt `r(varlist)' using "${directory}/Data/Clean/M2_Vignettes_IRT.dta" , id(uid)
 
-		merge 1:1 uid using "${directory}/Data/Clean/M2_Vignettes_IRT.dta" ///
+
+		merge 1:1 uid using "${datadir}/Clean/M2_Vignettes_IRT.dta" ///
     , nogen keepusing(theta_mle) keep(3)
 
-    replace theta_mle = . if theta_mle < -4.5 
+    replace theta_mle = . if theta_mle < -4.5
 			xtile theta_pct = theta_mle , n(100)
 				replace theta_pct = theta_pct / 100
 
 
-save "${directory}/Constructed/M1_providers.dta" , replace
+hashdata using "${directory}/Constructed/M1_providers.dta" ,  replace
 	use "${directory}/Constructed/M1_providers.dta" , clear
 
 // M1 Villages
-use "${directory}/Data/Raw/Maqari1/VillageProvider1.dta" , clear
+use "${datadir}/Raw/Maqari1/VillageProvider1.dta" , clear
 
   // Cleaning
   drop vtag
@@ -283,7 +284,7 @@ preserve
     label var uvillid "Dataset Unique Village ID"
 
 
-save "${directory}/Constructed/M1_Villages_prov`type'.dta" , replace
+hashdata using "${directory}/Constructed/M1_Villages_prov`type'.dta" ,  replace
 restore
 }
 
@@ -318,6 +319,6 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
       drop vtag
       rename check type
 
-  save "${directory}/Constructed/M1_providers-simulations.dta" , replace
+  hashdata using "${directory}/Constructed/M1_providers-simulations.dta" ,  replace
 
 * Have a lovely day!
