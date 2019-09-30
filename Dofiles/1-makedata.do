@@ -1,5 +1,5 @@
 // M1 Household Survey
-use "${datadir}/Raw/Maqari1/Household_data2.dta" , clear
+use "${datadir}/Data/Raw/Maqari1/Household_data2.dta" , clear
 
 	label var roof "Concrete or metal roof"
 	label var tv "Television"
@@ -18,7 +18,7 @@ hashdata using "${directory}/Constructed/M1_households.dta" ,  replace
 
 // M1 Private providers
 
-use "${datadir}/Raw/Maqari1/VillageProvider1.dta" ///
+use "${datadir}/Data/Raw/Maqari1/VillageProvider1.dta" ///
   if provtype == 1 | provtype == 6, clear
   drop if s2q6 == 6 // Chemists
 
@@ -83,7 +83,7 @@ use "${datadir}/Raw/Maqari1/VillageProvider1.dta" ///
   // IRT
 
   merge 1:m finclinid_new finprovid_new ///
-    using "${datadir}/Raw/Maqari1/Combined_vignettes3.dta" ///
+    using "${datadir}/Data/Raw/Maqari1/Combined_vignettes3.dta" ///
     , keep(1 3)
 
 
@@ -121,7 +121,7 @@ use "${datadir}/Raw/Maqari1/VillageProvider1.dta" ///
 	// easyirt `r(varlist)' using "${directory}/Data/Clean/M2_Vignettes_IRT.dta" , id(uid)
 
 
-		merge 1:1 uid using "${datadir}/Clean/M2_Vignettes_IRT.dta" ///
+		merge 1:1 uid using "${datadir}/Data/Clean/M2_Vignettes_IRT.dta" ///
     , nogen keepusing(theta_mle) keep(3)
 
     replace theta_mle = . if theta_mle < -4.5
@@ -133,7 +133,7 @@ hashdata using "${directory}/Constructed/M1_providers.dta" ,  replace
 	use "${directory}/Constructed/M1_providers.dta" , clear
 
 // M1 Villages
-use "${datadir}/Raw/Maqari1/VillageProvider1.dta" , clear
+use "${datadir}/Data/Raw/Maqari1/VillageProvider1.dta" , clear
 
   // Cleaning
   drop vtag
@@ -320,5 +320,13 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
       rename check type
 
   hashdata using "${directory}/Constructed/M1_providers-simulations.dta" ,  replace
+
+// Get vignettes data
+
+  hashdata "${datadir}/Constructed/M2_Vignettes.dta" ///
+    using "${directory}/Constructed/M2_Vignettes.dta" , replace
+
+  hashdata "${datadir}/Constructed/M2_Vignettes_long.dta" ///
+    using "${directory}/Constructed/M2_Vignettes_long.dta" , replace
 
 * Have a lovely day!

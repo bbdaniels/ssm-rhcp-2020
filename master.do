@@ -1,7 +1,7 @@
 * Master for MSP Project
 
 	global directory "/Users/bbdaniels/github/ssm-rhcp-2019/"
-	global datadir   "/Users/bbdaniels/Dropbox/Research/SSM-Papers/Data/"
+	global datadir   "/Users/bbdaniels/Dropbox/Research/SSM-Papers/"
 
 	set matsize 5000
 
