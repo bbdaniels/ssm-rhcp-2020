@@ -128,6 +128,9 @@ use "${datadir}/Data/Raw/Maqari1/VillageProvider1.dta" ///
 			xtile theta_pct = theta_mle , n(100)
 				replace theta_pct = theta_pct / 100
 
+    gen vignette = theta_mle != .
+      label var vignette "Completed Vignette"
+
 
 hashdata using "${directory}/Constructed/M1_providers.dta" ,  replace
 	use "${directory}/Constructed/M1_providers.dta" , clear
@@ -328,5 +331,27 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
   hashdata "${datadir}/Constructed/M2_Vignettes_long.dta" ///
     using "${directory}/Constructed/M2_Vignettes_long.dta" , replace
+
+  hashdata "${datadir}/Data/Raw/Maqari1/Combined_vignettes3.dta" ///
+    using "${directory}/Constructed/Combined_vignettes3.dta" , replace
+
+// PHC data
+
+import excel using "${datadir}/Data/Raw/PHC-Provider/PHC_ProviderLong.xlsx" ///
+  , first clear
+
+  foreach var of varlist * {
+    local theLabel = `var'[1]
+    lab var `var' "`theLabel'"
+  }
+    drop in 1/2
+
+  destring s6q12 , replace force
+    replace s6q12 = . if s6q12 < 0
+
+  encode s1q3 , gen(state_code)
+
+  compress
+  hashdata using "${directory}/Constructed/M2_providers.dta" , replace reset
 
 * Have a lovely day!

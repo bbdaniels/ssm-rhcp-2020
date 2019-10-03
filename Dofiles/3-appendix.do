@@ -32,12 +32,40 @@ OUTLINE:
      gen case = "`anything'"
   end
 
+// ---------------------------------------------------------------------------------------------
+// NEW R&R -------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
+
+// Table: vignette sampling and completion
+use "${directory}/Constructed/M1_providers.dta" , clear
+
+  lab var male "Male"
+  tabgen type
+  gen priv = practype == 2
+    label var priv "Private"
+
+  lab def vignette 0 "No Followup" 1 "Vignette"
+
+  iebaltab  ///
+    male s3q11_* otherjob_none age_2040 age_4060 age_60up ///
+    type_1 type_2 type_3 priv ///
+  if survey == 1 ///
+  , grpvar(vignette) save("${outputsa}/t-vignettes.xlsx") co(1) replace rowv
+
+// Table : Regression PHC ----------------------------------------------------------------------
+use "${directory}/Constructed/Combined_vignettes3.dta" , clear
+
+  reg comp dmses if (public==1)  [pweight = weight_vig]
+  reg comp dmses age i.male i.stateid if (public==1)  [pweight = weight_vig]
+
+
+
 // Table 1: Sampling and survey completion -----------------------------------------------------
 use "${directory}/Constructed/M1_providers.dta" , clear
 
 gen n = 1
 
-labelcollapse (sum) n survey nosurvey permagone tempgone refuse noreason, by(statename)
+labelcollapse (sum) n survey vignette nosurvey permagone tempgone refuse noreason, by(statename)
 
   export excel ///
     using "${outputsa}/t-sampling.xlsx" , replace first(varl)

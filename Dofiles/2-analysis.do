@@ -116,8 +116,10 @@
   use "${directory}/Constructed/M2_Vignettes.dta" ///
      if provtype == 1 | provtype == 6, clear
 
+  gen count = 1
+
   // Get graphing points
-  collapse (mean) mean = theta_mle (sem) sem = theta_mle , by(mbbs state_code)
+  collapse (sum) count (mean) mean = theta_mle (sem) sem = theta_mle , by(mbbs state_code)
     gen ul = mean + 1.96*sem
     gen ll = mean - 1.96*sem
 
@@ -149,8 +151,9 @@
     , x(theta_mle) range(-3(1)2) lab(-4) p
 	tw ///
     (rcap ll ul n , lw(thin) lc(black) hor) ///
-    (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(small)) ///
-    (scatter n mean if mbbs == 1, mc(navy) m(.) msize(small)) ///
+    (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(medlarge)) ///
+    (scatter n mean if mbbs == 1, mc(navy) m(.) msize(medlarge)) ///
+    (scatter n mean , m(none) mlab(count) mlabpos(0) mlabc(white) mlabsize(tiny)) ///
     (scatter pos2 pos if mbbs == 1, mlabpos(3) m(none) ml(state_code) mlabc(black)) ///
   , yscale(off) xlab(-4.5 " " `r(theLabels)', labsize(small)) ysize(6) ///
     legend(on size(small) order (2 "Non-MBBS" 3 "MBBS") ring(0) pos(5) c(1))
@@ -423,7 +426,8 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
 // Table 2: Caseload regressions ---------------------------------------------------------------
 use "${directory}/Constructed/M1_providers.dta" ///
-if private == 1 | mbbs == 1 , clear
+  if private == 1 | mbbs == 1 , clear
+  
   recode s1q15 (-99 = .)
 
   replace public = 1-private
