@@ -151,9 +151,8 @@
     , x(theta_mle) range(-3(1)2) lab(-4) p
 	tw ///
     (rcap ll ul n , lw(thin) lc(black) hor) ///
-    (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(medlarge)) ///
-    (scatter n mean if mbbs == 1, mc(navy) m(.) msize(medlarge)) ///
-    (scatter n mean , m(none) mlab(count) mlabpos(0) mlabc(white) mlabsize(tiny)) ///
+    (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(med)) ///
+    (scatter n mean if mbbs == 1, mc(navy) m(.) msize(med)) ///
     (scatter pos2 pos if mbbs == 1, mlabpos(3) m(none) ml(state_code) mlabc(black)) ///
   , yscale(off) xlab(-4.5 " " `r(theLabels)', labsize(small)) ysize(6) ///
     legend(on size(small) order (2 "Non-MBBS" 3 "MBBS") ring(0) pos(5) c(1))
@@ -418,7 +417,7 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
 
   labelcollapse (mean) mbbs_pub mbbs_pri mbbs nonmbbs none ///
-    [pweight = weight_psu] , by(state)
+    [pweight = weight_psu] , by(state_code)
 
   export excel using "${outputs}/t1-availability.xlsx" , first(varl) replace
 
@@ -427,7 +426,7 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 // Table 2: Caseload regressions ---------------------------------------------------------------
 use "${directory}/Constructed/M1_providers.dta" ///
   if private == 1 | mbbs == 1 , clear
-  
+
   recode s1q15 (-99 = .)
 
   replace public = 1-private
@@ -438,8 +437,8 @@ use "${directory}/Constructed/M1_providers.dta" ///
   // Adjust number of patients for public clinics
   egen group = group(private mbbs) , label
       replace group = 2 if group == .
-  bys finclinid: gen n = _N
-    bys stateid finclinid_new: gen ndocs = _N
+  bys finclinid : gen n = _N
+    bys stateid finclinid_new : gen ndocs = _N
     replace patients = patients/ndocs if public == 1
 
   // Covariates

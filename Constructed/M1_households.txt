@@ -13,6 +13,7 @@ fan           112565      2  .6170657         0         1  Electric fan
 cooker        112476      2  .3317774         0         1  Pressure cooker
 mobilephone   112524      2  .5576055         0         1  Mobile phone
 bike          112416      2  .1889856         0         1  Bicycle
+finclinid       2627    891  1.18e+08  1.01e+07  1.91e+08  Clinic ID
 provtype        2346      6  1.461637         1         6  Provider Type
 practype        2346      2  1.794118         1         2  Government or Private
 finclinid_~w    2346    809  1.19e+08  1.01e+07  1.91e+08  

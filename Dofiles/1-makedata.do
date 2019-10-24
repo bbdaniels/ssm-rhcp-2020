@@ -366,6 +366,6 @@ import excel using "${datadir}/Data/Raw/PHC-Provider/PHC_ProviderLong.xlsx" ///
 
   encode s1q3 , gen(state_code)
 
-dataset "${directory}/Constructed/M2_providers.dta" 
+dataset "${directory}/Constructed/M2_providers.dta"
 
 * Have a lovely day!

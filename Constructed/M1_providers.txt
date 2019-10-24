@@ -4,6 +4,7 @@ Variable       Obs Unique       Mean       Min       Max  Label
 stateid       4335     19   11.00092         1        19  state id
 statename     4335     19          .         .         .  state name
 villid        4335     88   42.65306         1        88  village id
+finclinid     4335   4036   1.11e+08   3100669  1.91e+08  clinic id 2
 provtype      4335      2   1.790081         1         6  Provider Type
 practype      4335      2   1.862514         1         2  Government or Private
 s1q3          4278      9    2.02618         1         9  translator id
