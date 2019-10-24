@@ -1,0 +1,29 @@
+
+Variable     Obs Unique      Mean       Min       Max  Label
+--------------------------------------------------------------------------------------
+villid      3038     88  41.12047         1        88  village id
+private     3038      2        .5         0         1  Private
+state_code  3038     19    9.9921         1        19  state name
+type_1      3038      6  .0868993         0         5  MBBS
+type_2      3038      9  .2784727         0         8  AYUSH
+type_3      3038     20  .7863726         0        22  Informal
+type_4      3038      9   .275181         0         8  Unknown
+regsim_1    1380      2  .1471014         0         1  Has MBBS
+regsim_2     916      2  .4672489         0         1  Quality > Mean MBBS
+regsim_3     916      2  .3078603         0         1  Quality > Mean MBBS Global
+theta_mle    916    894   .055922  -4.34731   3.15752  Theta (MLE)
+smses       3038     19  1.320088  .5943771  2.106291  (firstnm) smses
+weight_psu  3038     76  475789.7  68528.98   2016045  (firstnm) weight_psu
+pop_vill    3016   1259  2670.361       251     19903  (firstnm) pop_vill
+patients    2340    373  35.07334         0       550  (sum) patients
+type_10     3038      6  .0457538         0         5  Public MBBS
+type_11     3038      5  .0411455         0         4  Private MBBS
+type_20     3038      5  .0506912         0         4  Public AYUSH
+type_21     3038      9  .2277814         0         8  Private AYUSH
+type_30     3038      7  .0520079         0         6  Public Informal
+type_31     3038     20  .7343647         0        22  Private Informal
+type_40     3038      5  .0477288         0         4  Public Unknown
+type_41     3038      9  .2274523         0         8  Private Unknown
+u5mr        3038     17  44.69717         7        78  Under-5 Mortality Rate
+uvillid     3038   1519       760         1      1519  Dataset Unique Village ID
+--------------------------------------------------------------------------------------

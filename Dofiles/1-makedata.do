@@ -1,3 +1,18 @@
+// Data transfer program
+cap prog drop dataset
+    prog def  dataset
+    syntax anything
+
+    iecodebook export using `anything' ///
+      , hash text reset replace trim( ///
+          "${directory}/dofiles/1-makedata.do" ///
+          "${directory}/dofiles/2-analysis.do" ///
+          "${directory}/dofiles/3-appendix.do" ///
+          "${directory}/dofiles/4-textstats.do" ///
+          "${directory}/dofiles/5-revision.do" ///
+        )
+end
+
 // M1 Household Survey
 use "${datadir}/Data/Raw/Maqari1/Household_data2.dta" , clear
 
@@ -13,8 +28,8 @@ use "${datadir}/Data/Raw/Maqari1/Household_data2.dta" , clear
 
   replace statename = proper(statename)
 
-hashdata using "${directory}/Constructed/M1_households.dta" ,  replace
-	use "${directory}/Constructed/M1_households.dta" , clear
+dataset "${directory}/Constructed/M1_households.xlsx"
+	  use "${directory}/Constructed/M1_households.dta" , clear
 
 // M1 Private providers
 
@@ -132,7 +147,7 @@ use "${datadir}/Data/Raw/Maqari1/VillageProvider1.dta" ///
       label var vignette "Completed Vignette"
 
 
-hashdata using "${directory}/Constructed/M1_providers.dta" ,  replace
+dataset "${directory}/Constructed/M1_providers.dta"
 	use "${directory}/Constructed/M1_providers.dta" , clear
 
 // M1 Villages
@@ -287,7 +302,7 @@ preserve
     label var uvillid "Dataset Unique Village ID"
 
 
-hashdata using "${directory}/Constructed/M1_Villages_prov`type'.dta" ,  replace
+dataset "${directory}/Constructed/M1_Villages_prov`type'.dta"
 restore
 }
 
@@ -322,18 +337,18 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
       drop vtag
       rename check type
 
-  hashdata using "${directory}/Constructed/M1_providers-simulations.dta" ,  replace
+  dataset "${directory}/Constructed/M1_providers-simulations.dta"
 
 // Get vignettes data
 
-  hashdata "${datadir}/Constructed/M2_Vignettes.dta" ///
-    using "${directory}/Constructed/M2_Vignettes.dta" , replace
+  use "${datadir}/Constructed/M2_Vignettes.dta"
+  dataset "${directory}/Constructed/M2_Vignettes.dta"
 
-  hashdata "${datadir}/Constructed/M2_Vignettes_long.dta" ///
-    using "${directory}/Constructed/M2_Vignettes_long.dta" , replace
+  use "${datadir}/Constructed/M2_Vignettes_long.dta"
+  dataset "${directory}/Constructed/M2_Vignettes_long.dta"
 
-  hashdata "${datadir}/Data/Raw/Maqari1/Combined_vignettes3.dta" ///
-    using "${directory}/Constructed/Combined_vignettes3.dta" , replace
+  use "${datadir}/Data/Raw/Maqari1/Combined_vignettes3.dta"
+  dataset "${directory}/Constructed/Combined_vignettes3.dta"
 
 // PHC data
 
@@ -351,7 +366,6 @@ import excel using "${datadir}/Data/Raw/PHC-Provider/PHC_ProviderLong.xlsx" ///
 
   encode s1q3 , gen(state_code)
 
-  compress
-  hashdata using "${directory}/Constructed/M2_providers.dta" , replace reset
+dataset "${directory}/Constructed/M2_providers.dta" 
 
 * Have a lovely day!
