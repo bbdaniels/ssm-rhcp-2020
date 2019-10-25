@@ -179,7 +179,7 @@
   recode s2q16 (1/5 = 5)(6/10 = 10)(11/15 = 15)(16/20 = 20)(26/max=30) , gen(minpp)
   gen hours = check*s2q16/60
     gen pct = hours / 6
-    mean pct patients s2q16 [pweight = weight_psu] , over(group) // average utilization
+    mean hours pct patients s2q16 [pweight = weight_psu] , over(group) // average utilization
 
   // Graph
   replace minpp = minpp+1 if group == 1 // Public MBBS
@@ -517,39 +517,47 @@ use "${directory}/Constructed/M1_providers.dta" , clear
     reg theta_mle `covars' [pweight = weight_psu]
       getstats reg1
 
-    // Column 1b: Public
+    // Column 2: Public
     reg theta_mle `covars' if private == 0 [pweight = weight_psu]
       getstats reg1b
 
-    // Column 2: Private Only
-    reg theta_mle `covars' pcomp if private == 1 [pweight = weight_psu]
+    // Column 3: Private Only
+    reg theta_mle `covars'  if private == 1 [pweight = weight_psu]
       getstats reg2
 
-    // Column 3: Private IP Only
+    // Column 4: Private Only
+    reg theta_mle `covars' pcomp if private == 1 [pweight = weight_psu]
+      getstats reg2b
+
+    // Column 5: Private IP Only
     reg theta_mle `covars' pcomp if private == 1 & mbbs == 0 [pweight = weight_psu]
       getstats reg3
 
-    // Column 4: Base State FE
+    // Column 6: Base State FE
     areg theta_mle `covars' [pweight = weight_psu] , a(state_code)
       getstats reg4
 
-    // Column 1b: Public FE
+    // Column 7: Public FE
     areg theta_mle `covars' if private == 0 [pweight = weight_psu] , a(state_code)
       getstats reg4b
 
-    // Column 5: Private Only State FE
-    areg theta_mle `covars' pcomp if private == 1 [pweight = weight_psu] , a(state_code)
+    // Column 8: Private Only State FE
+    areg theta_mle `covars' if private == 1 [pweight = weight_psu] , a(state_code)
       getstats reg5
 
-    // Column 6: Private IP Only State FE
+    // Column 9: Private Only State FE
+    areg theta_mle `covars' pcomp if private == 1 [pweight = weight_psu] , a(state_code)
+      getstats reg5b
+
+    // Column 10: Private IP Only State FE
     areg theta_mle `covars' pcomp if private == 1 & mbbs == 0 [pweight = weight_psu] , a(state_code)
       getstats reg6
 
   // Output
-  outwrite reg1 reg1b reg2 reg3 reg4 reg4b reg5 reg6 ///
+  outwrite reg1 reg1b reg2 reg2b reg3 reg4 reg4b reg5 reg5b reg6 ///
     using "${outputs}/t3-vignettes.xlsx" ///
     , replace stats(N mean sd r2) ///
-    col("Full Sample" "Public Providers" "Private Providers" "Private non-MBBS" ///
-      "Full Sample" "Public Providers" "Private Providers" "Private non-MBBS")
+    col("Full Sample" "Public Providers" "Private Providers" "Private Providers" "Private non-MBBS" ///
+      "Full Sample" "Public Providers" "Private Providers" "Private Providers" "Private non-MBBS")
 
 // Have a lovely day!

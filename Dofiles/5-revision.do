@@ -12,6 +12,82 @@ use "${directory}/Constructed/M1_providers.dta" if private == 1  , clear
     // Assign the higher of calculated cost or stated total fees to private provider
     replace cpp = fees_total if private == 1 & cpp < fees_total
 
+// Time heaping
+
+	use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , clear
+  count
+  recode s1q15 (-99 = .)
+  count if s2q15 != . & s2q16 != .
+
+  // Adjust number of patients for public clinics
+  egen group = group(private mbbs) , label
+      replace group = 2 if group == .
+  bys finclinid: gen n = _N
+   bys stateid finclinid_new: gen ndocs = _N
+   replace patients = patients/ndocs if public == 1
+	gen check = patients
+    drop if (check > 120 | s2q16 == 0)
+
+    gen check2 = s2q16 - 0.5
+  histogram check2 if check2 <= 30, s(0.5) w(1) xlab(5(5)25) ///
+    xtit("Minutes per Patient") freq
+
+     recode s2q16 (1/5 = 5)(6/10 = 10)(11/15 = 15)(16/20 = 20)(26/max=30) , gen(minpp)
+     gen hours = check*s2q16/60
+       gen pct = hours / 6
+
+     histogram hours, by(group, c(1)) frac
+
+// MBBS-SES correlation
+  use "${directory}/Constructed/M2_Vignettes.dta" ///
+    if (provtype == 1 | provtype == 6) & public == 1, clear
+
+  preserve
+    collapse (mean) dmses theta_mle (firstnm) statename , by(state_code) fast
+    rename dmses smses
+    rename theta_mle stheta
+    tempfile state
+    save `state'
+  restore
+
+  collapse (mean) theta_mle state_code, by(dmses) fast
+    merge m:1 state_code using `state' , keep(3)
+
+  tw (lpolyci theta_mle dmses)(scatter theta_mle dmses) ///
+  , ${graph_opts} title("District SES and Public Competence") ///
+    xtit("District SES") ytit("Mean Public Competence")
+
+  sort state_code dmses
+    bys state_code : gen include = _n == _N
+  levelsof state_code , local(states)
+  foreach state in `states' {
+    local theGraphs "`theGraphs' (lfit theta_mle dmses if state_code == `state' , lc(black))"
+  }
+
+  tw (lpolyci theta_mle dmses) `theGraphs'  ///
+    (scatter stheta smses if include == 1 ///
+      , m(none) mlab(statename) mlabc(black) mlabpos(6)) ///
+  ,   xtit("District SES") ytit("Mean Public Competence")
+
+// MBBS composition
+use "${directory}/Constructed/M1_providers.dta" , clear
+
+  binscatter public dmses ///
+  , ${graph_opts} xtit("District SES (20 Equal Bins)") ytit("Mean Public Share") ///
+    ylab(0 "0%" .05 "5%" .1 "10%" .15 "15%" .2 "20%") title("District SES and Public Share")
+
+use "${directory}/Constructed/M1_providers.dta" , clear
+  keep if private == 1
+  collapse (mean) mbbs dmses theta_mle (firstnm) statename, by(state_code)
+  tw (lfit mbbs dmses) (scatter mbbs dmses  ///
+     , m(.) mlab(statename) mlabc(black) mlabangle(30) mlabsize(small) mlabpos(3)) ///
+  , xtit("District SES") ytit("Mean MBBS Share of Private Sector") ///
+    ylab(0 "0%" .1 "10%" .2 "20%" .3 "30%" .4 "40%")
+
+use "${directory}/Constructed/M1_providers.dta" , clear
+  keep if private == 1
+
+  ta state_code mbbs
 
 //  MBBS-NON-MBBS DIFFFERENCES STATE-BY-STATE
 
@@ -105,6 +181,19 @@ use "${directory}/Constructed/M1_providers.dta" , clear
         legend(on pos(11))
 
 // Table : Regression PHC ----------------------------------------------------------------------
+
+use "/Users/bbdaniels/Dropbox/Research/_Archive/Maqari1/Data/PHC_ProviderLong/Split/PHC_ProviderLong_clean_share.dta" , clear
+
+gen age = 2010 - s3q2
+clonevar num_patients = s4q12
+clonevar time_patients = s4q13
+
+reg s6q5 b11.s2q2 age num_patients time_patients i.s5q2
+  est sto salary
+  xml_tab salary  , replace save( "${outputsa}/t-salary.xlsx")
+
+
+
 use "${directory}/Constructed/Combined_vignettes3.dta" , clear
 
   lab def stateid ///
