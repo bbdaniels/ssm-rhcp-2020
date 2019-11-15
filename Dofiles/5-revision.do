@@ -53,9 +53,11 @@ use "${directory}/Constructed/M1_providers.dta" if private == 1  , clear
   collapse (mean) theta_mle state_code, by(dmses) fast
     merge m:1 state_code using `state' , keep(3)
 
-  tw (lpolyci theta_mle dmses)(scatter theta_mle dmses) ///
-  , ${graph_opts} title("District SES and Public Competence") ///
+  tw (lpolyci theta_mle dmses)(scatter theta_mle dmses if theta_mle < 2) ///
+  ,  ///
     xtit("District SES") ytit("Mean Public Competence")
+
+    graph save "${outputsa}/ses-1.gph" , replace
 
   sort state_code dmses
     bys state_code : gen include = _n == _N
@@ -68,6 +70,16 @@ use "${directory}/Constructed/M1_providers.dta" if private == 1  , clear
     (scatter stheta smses if include == 1 ///
       , m(none) mlab(statename) mlabc(black) mlabpos(6)) ///
   ,   xtit("District SES") ytit("Mean Public Competence")
+
+    graph save "${outputsa}/ses-2.gph" , replace
+
+  graph combine ///
+    "${outputsa}/ses-1.gph" ///
+    "${outputsa}/ses-2.gph" ///
+  , r(1) xsize(10) ycom
+
+  graph export  "${outputsa}/ses-competence.eps" , replace
+
 
 // MBBS composition
 use "${directory}/Constructed/M1_providers.dta" , clear
@@ -95,12 +107,16 @@ use "${directory}/Constructed/M1_providers.dta" , clear
   use "${directory}/Constructed/M2_Vignettes.dta" ///
     if provtype == 1 | provtype == 6, clear
 
-  reg theta_mle mbbs i.state_code
+  reg theta_mle mbbs#i.state_code
 
     margins state_code , dydx(mbbs)
     marginsplot , title("") ${graph_opts} horizontal ///
       plotopts(connect(none) yscale(reverse) ytit("") ///
-        xtit("MBBS difference within state (SDs)") xline(0))
+        xtit("MBBS difference within state (SDs)") xline(0)) ///
+        xsize(10)
+
+      graph export "${outputsa}/mbbs-competence.eps" , replace
+
 
   // Counts
   use "${directory}/Constructed/M2_Vignettes.dta" ///
@@ -108,17 +124,26 @@ use "${directory}/Constructed/M1_providers.dta" , clear
 
   gen nonmbbs = 1-mbbs
 
-  collapse (sum) mbbs nonmbbs , by(state_code) fast // State totals
+  bys state_code : egen mbbs_score = mean(theta_mle) if mbbs
+  bys state_code : egen nonmbbs_score = mean(theta_mle) if nonmbbs
+
+  collapse (sum) mbbs nonmbbs (mean) mbbs_score nonmbbs_score, by(state_code) fast // State totals
   gen mbbs_pct = string(round((mbbs/(mbbs+nonmbbs)),.001)*100) + "%"
   gen nonmbbs_pct = string(round((nonmbbs/(mbbs+nonmbbs)),.001)*100) + "%"
+  tostring mbbs_score, gen(mbbs_lvl) format(%9.2f) force
+  tostring nonmbbs_score, gen(nonmbbs_lvl) format(%9.2f) force
 
   lab var state_code "State"
   lab var mbbs "MBBS Providers"
   lab var mbbs_pct "MBBS Share"
   lab var nonmbbs "Non-MBBS Providers"
   lab var nonmbbs_pct "Non-MBBS Share"
+  lab var mbbs_lvl "MBBS Mean Competence"
+  lab var nonmbbs_lvl "Non-MBBS Mean Competence"
 
-  export excel using "${outputsa}/t-shares.xlsx" , first(varl) replace
+  export excel ///
+    state_code mbbs mbbs_pct nonmbbs nonmbbs_pct mbbs_lvl nonmbbs_lvl ///
+    using "${outputsa}/t-shares.xlsx" , first(varl) replace
 
 
 // Table: vignette sampling and completion

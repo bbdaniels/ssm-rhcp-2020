@@ -4,7 +4,7 @@ cap prog drop dataset
     syntax anything
 
     iecodebook export using `anything' ///
-      , hash text reset replace trim( ///
+      , copy hash text reset replace trim( ///
           "${directory}/dofiles/1-makedata.do" ///
           "${directory}/dofiles/2-analysis.do" ///
           "${directory}/dofiles/3-appendix.do" ///
