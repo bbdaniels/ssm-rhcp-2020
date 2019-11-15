@@ -421,15 +421,34 @@ use "${directory}/Constructed/M1_providers.dta" , clear
         legend(on pos(11))
 
 
-     // IPW
-      reg theta_mle mbbs#i.state_code [pweight=completion]
+     // IPW Status quo cost and quality -------------------------------------------------------
+      use "${directory}/Constructed/M1_providers-simulations.dta", clear
+      pq Status Quo
+      tempfile main
+        save `main' , replace
 
-        margins state_code , dydx(mbbs)
-        marginsplot , title("") horizontal ///
-          plotopts(connect(none) yscale(reverse) ytit("") ///
-            xtit("MBBS difference within state (SDs)") xline(0)  ///
-            mc(black) msize(med) m(o)) ///
-          ciopts(recast(rspike) lc(gs12))
+      use "${directory}/Constructed/M1_providers-simulations-weight.dta", clear
+      pq Status Quo
+      drop case
+      rename (cpp theta_mle)(cpp_w theta_mle_w)
+      merge 1:1 state_code using `main'
+
+      drop case _merge
+      lab var cpp "Cost per Patient"
+      lab var cpp_w "Cost per Patient"
+      lab var theta_mle "Average Quality"
+      lab var theta_mle_w "Average Quality"
+
+      decode state_code, gen(state)
+        lab var state "State"
+        drop state_code
+      tostring * , replace force format(%9.2f)
+
+      export excel state cpp cpp_w theta_mle theta_mle_w ///
+        using "${outputsa}/t-estimated-ipw.xlsx" ///
+      , first(varl) replace
+
+
 
 
 // Have a lovely day! --------------------------------------------------------------------------
