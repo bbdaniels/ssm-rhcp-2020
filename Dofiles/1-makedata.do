@@ -215,15 +215,13 @@ use "${datadir}/Data/Raw/Maqari1/VillageProvider1.dta" , clear
   restore
 
 // Provider and Paramedical datasets
-foreach type in 0 1 2 {
+foreach type in 0 1 {
 preserve
 
-  // Subset data
-
-  if (`type' > 0) keep if (provtype == 1 | provtype == 6)
+  keep if (provtype == 1 | provtype == 6) == `type'
   drop if (s2q6 == 6 | s2q6 == 5) // Chemists and ASHAs
 
-  if `type' > 0 {
+  if `type' {
   // Set up regulation simulation
     // Has MBBS
     bys state_code villid: gen regsim_1 = (type==1)
@@ -250,23 +248,10 @@ preserve
       label var regsim_3 "Quality > Mean MBBS Global"
       drop mbbsmean temp
 
-    // Completion IPW calculation
-      gen vignette = (theta_mle != .)
-      qui elasticnet linear vignette ///
-        private mbbs male i.s3q11 otherjob_none age ///
-        patients fees_total s2q16 ///
-        i.s3q4 i.s3q5 i.s2q20a i.s3q2
-
-        lassoselect id = `e(ID_sel)'
-          local covars = "`e(othervars_sel)'"
-        reg vignette `covars'
-          predict completion
-
-
-    if `type' == 1 local simulation (max) regsim_1 regsim_2 regsim_3 (mean) theta_mle
-    if `type' == 2 local simulation (max) regsim_1 regsim_2 regsim_3 (mean) theta_mle [pweight=completion]
+    if `type' local simulation (max) regsim_1 regsim_2 regsim_3 (mean) theta_mle
 
   }
+
 
 	labelcollapse (sum) type_? ///
     `simulation' ///
@@ -323,7 +308,6 @@ restore
 
 use "${directory}/Constructed/M1_Villages_prov0.dta" , clear
 use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
-use "${directory}/Constructed/M1_Villages_prov2.dta" , clear
 
 // Cost simulations data setup
 

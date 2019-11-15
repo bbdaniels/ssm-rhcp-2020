@@ -432,6 +432,4 @@ use "${directory}/Constructed/M1_providers.dta" , clear
           ciopts(recast(rspike) lc(gs12))
 
 
-
-
 // Have a lovely day! --------------------------------------------------------------------------
