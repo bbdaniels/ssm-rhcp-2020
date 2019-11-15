@@ -355,6 +355,53 @@ use "${directory}/Constructed/M1_Villages_prov2.dta" , clear
 
   dataset "${directory}/Constructed/M1_providers-simulations.dta"
 
+// Cost simulations data setup -- reweighted
+
+  use "${directory}/Constructed/M1_providers.dta" , clear
+  replace public = 1-private
+
+  // Create categories
+  egen check = group(type private) , label
+
+  // Calculate patients and adjust for public clinics
+  gen ppd = patients
+    bys stateid finclinid_new: gen ndocs = _N
+    replace ppd = ppd/ndocs if public == 1
+    replace patients = patients/ndocs if public == 1
+
+  // Flag for public sector MBBS availability and shares calculation
+  gen pubdoc = type == 1
+    bys state_code villid: egen anypub = max(pubdoc)
+    gen ppd2 = patients if anypub == 1
+
+  // Weighting
+  qui elasticnet linear vignette ///
+    private mbbs male s3q11_* otherjob_none age ///
+    patients fees_total s2q16 ///
+    i.s3q4 i.s3q5 i.s2q20a i.s3q2
+
+    // s3q4 s3q5 s2q20a s3q2
+
+    lassoselect id = `e(ID_sel)'
+      local covars = "`e(othervars_sel)'"
+    reg vignette `covars'
+      predict completion
+
+  // Collapse to average village shares within state
+  gen n = 1
+    drop vtag
+    egen vtag = tag(state_code villid)
+  collapse (rawsum) vtag n ppd ppd2 medincome ///
+    (mean) fees_total theta_pct theta_mle private ///
+     [pweight=completion] ///
+    , by(state_code check) fast
+
+      bys state_code: egen vills = sum(vtag)
+      drop vtag
+      rename check type
+
+  dataset "${directory}/Constructed/M1_providers-simulations-weight.dta"
+
 // Get vignettes data
 
   use "${datadir}/Constructed/M2_Vignettes.dta"
