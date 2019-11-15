@@ -6,6 +6,8 @@ s1q15       12214     34         .    .       .  Date of Survey DD
 s2q6        12210      4         .    .       .  Full time
 s3q1        12206   1508         .    .       .  PHC ID Header Page 3
 s3q2        12207     10         .    .       .  Birthplace
+s3q4        12198      8         .    .       .  Language fluency
+s3q5        12192      9         .    .       .  Caste
 s3q11       12205      6         .    .       .  PHC housing exists
 s4q6        12160     10         .    .       .  Night shift
 s4q12       12137     12         .    .       .  Previous setting rural urban

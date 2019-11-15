@@ -30,7 +30,7 @@ use "${directory}/Constructed/M1_providers.dta" if private == 1  , clear
 
     gen check2 = s2q16 - 0.5
   histogram check2 if check2 <= 30, s(0.5) w(1) xlab(5(5)25) ///
-    xtit("Minutes per Patient") freq
+    xtit("Minutes per Patient") freq fc(black) lc(white) la(center)
 
      recode s2q16 (1/5 = 5)(6/10 = 10)(11/15 = 15)(16/20 = 20)(26/max=30) , gen(minpp)
      gen hours = check*s2q16/60

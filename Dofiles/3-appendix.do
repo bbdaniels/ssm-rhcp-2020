@@ -239,7 +239,7 @@ use "${directory}/Constructed/M1_households.dta" ///
 
     graph export "${outputsa}/f-invillage.eps" , replace
 
-// Figure 4: Self reported patient loads vs observed patients -----------------------------------
+// Figure 4/5: Self reported patient loads vs observed patients --------------------------------
 
 use "${directory}/Constructed/birbhum-demand.dta" , clear
 
@@ -260,5 +260,176 @@ use "${directory}/Constructed/birbhum-demand.dta" , clear
     legend(on order(3 "Relationship in Data") ring(0) pos(11))
 
     graph export "${outputsa}/f-time.eps" , replace
+
+// Figure 6: Time heaping ----------------------------------------------------------------------
+use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , clear
+  count
+  recode s1q15 (-99 = .)
+  count if s2q15 != . & s2q16 != .
+
+  // Adjust number of patients for public clinics
+  egen group = group(private mbbs) , label
+      replace group = 2 if group == .
+  bys finclinid: gen n = _N
+   bys stateid finclinid_new: gen ndocs = _N
+   replace patients = patients/ndocs if public == 1
+	gen check = patients
+    drop if (check > 120 | s2q16 == 0)
+
+  gen check2 = s2q16 - 0.5
+
+  histogram check2 if check2 <= 30, s(0.5) w(1) xlab(5(5)25) ///
+    xtit("Minutes per Patient") freq fc(black) lc(white) la(center)
+
+    graph export "${outputsa}/f-time-heaping.eps" , replace
+
+// Figure 7: MBBS-SES correlation --------------------------------------------------------------
+  use "${directory}/Constructed/M2_Vignettes.dta" ///
+    if (provtype == 1 | provtype == 6) & public == 1, clear
+
+  preserve
+    collapse (mean) dmses theta_mle (firstnm) statename , by(state_code) fast
+    rename dmses smses
+    rename theta_mle stheta
+    tempfile state
+    save `state'
+  restore
+
+  collapse (mean) theta_mle state_code, by(dmses) fast
+    merge m:1 state_code using `state' , keep(3)
+
+  tw (lpolyci theta_mle dmses)(scatter theta_mle dmses if theta_mle < 2) ///
+  ,  ///
+    xtit("District SES") ytit("Mean Public Competence")
+
+    graph save "${outputsa}/ses-1.gph" , replace
+
+  sort state_code dmses
+    bys state_code : gen include = _n == _N
+  levelsof state_code , local(states)
+  foreach state in `states' {
+    local theGraphs "`theGraphs' (lfit theta_mle dmses if state_code == `state' , lc(black))"
+  }
+
+  tw (lpolyci theta_mle dmses) `theGraphs'  ///
+    (scatter stheta smses if include == 1 ///
+      , m(none) mlab(statename) mlabc(black) mlabpos(6)) ///
+  ,   xtit("District SES") ytit("Mean Public Competence")
+
+    graph save "${outputsa}/ses-2.gph" , replace
+
+  graph combine ///
+    "${outputsa}/ses-1.gph" ///
+    "${outputsa}/ses-2.gph" ///
+  , r(1) ycom
+
+  graph export  "${outputsa}/f-ses-competence.eps" , replace
+
+// Figure 8: MBBS-SES correlation --------------------------------------------------------------
+use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , clear
+collapse (mean) mbbs theta_mle , by(state_code)
+
+  tw ///
+    (scatter theta_mle mbbs , mc(black) mlab(state_code) ///
+      mlabc(black) mlabangle(30)) ///
+    (lowess theta_mle mbbs) ///
+  , xtit("MBBS Share of Providers Surveyed") ///
+    ytit("Average Provider Competence") ///
+    xlab(${pct})
+
+    graph export  "${outputsa}/f-mbbs-competence.eps" , replace
+
+// Figure 9: MBBS Differences by state  --------------------------------------------------------
+
+  // Graph
+  use "${directory}/Constructed/M2_Vignettes.dta" ///
+    if provtype == 1 | provtype == 6, clear
+
+  reg theta_mle mbbs#i.state_code
+
+    margins state_code , dydx(mbbs)
+    marginsplot , title("") horizontal ///
+      plotopts(connect(none) yscale(reverse) ytit("") ///
+        xtit("MBBS difference within state (SDs)") xline(0)  ///
+        mc(black) msize(med) m(o)) ///
+      ciopts(recast(rspike) lc(gs12))
+
+
+      graph export "${outputsa}/f-mbbs-statewise.eps" , replace
+
+// Table: vignette sampling and completion
+use "${directory}/Constructed/M1_providers.dta" , clear
+
+  // Cleaning
+  lab var male "Male"
+  tabgen type
+  gen priv = practype == 2
+    label var priv "Private"
+  lab var patients "Caseload x10"
+    replace patients = patients/10
+  lab var fees_total "Total Fee x10"
+    replace fees_total = fees_total/10
+  lab var s2q16 "Time per Patient x10"
+    replace s2q16 = s2q16/10
+  lab var public "Public
+  lab var age "Age"
+
+  lab def vignette 0 "No Followup" 1 "Vignette"
+
+  // Varlist
+  local covars male s3q11_* otherjob_none age ///
+    patients fees_total s2q16
+
+  // Balance tables
+    iebaltab  ///
+       `covars' ///
+      type_1 type_2 type_3 priv ///
+    if survey == 1 ///
+    , grpvar(vignette) save("${outputsa}/t-vignettes.xlsx") co(1) replace rowv
+
+    iebaltab  ///
+      `covars' ///
+      priv ///
+    if survey == 1 & type_1 == 1 ///
+    , grpvar(vignette) save("${outputsa}/t-vignettes-mbbs.xlsx") co(1) replace rowv
+
+    iebaltab  ///
+      `covars' ///
+      priv ///
+    if survey == 1 & type_1 == 0 ///
+    , grpvar(vignette) save("${outputsa}/t-vignettes-nonmbbs.xlsx") co(1) replace rowv
+
+  // LASSO
+    qui elasticnet linear vignette ///
+      private mbbs male s3q11_* otherjob_none age ///
+      patients fees_total s2q16 ///
+      i.s3q4 i.s3q5 i.s2q20a i.s3q2
+
+      // s3q4 s3q5 s2q20a s3q2
+
+      lassoselect id = `e(ID_sel)'
+        local covars = "`e(othervars_sel)'"
+      reg vignette `covars'
+        est sto Completion
+        predict completion
+      reg theta_mle `covars'
+        est sto Performance
+        predict performance
+
+      coefplot Completion Performance, $graph_opts xline(0) ///
+        title(Effect of Selected Variables on Vignettes) ///
+        legend(on pos(11))
+
+
+     // IPW
+      reg theta_mle mbbs#i.state_code [pweight=completion]
+
+        margins state_code , dydx(mbbs)
+        marginsplot , title("") horizontal ///
+          plotopts(connect(none) yscale(reverse) ytit("") ///
+            xtit("MBBS difference within state (SDs)") xline(0)  ///
+            mc(black) msize(med) m(o)) ///
+          ciopts(recast(rspike) lc(gs12))
+
 
 // Have a lovely day! --------------------------------------------------------------------------
