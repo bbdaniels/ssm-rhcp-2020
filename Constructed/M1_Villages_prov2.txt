@@ -4,22 +4,26 @@ Variable     Obs Unique      Mean       Min       Max  Label
 villid      3038     88  41.12047         1        88  village id
 private     3038      2        .5         0         1  Private
 state_code  3038     19    9.9921         1        19  state name
-type_1      3038      6  .0888743         0         5  MBBS
-type_2      3038      9  .3301514         0         8  AYUSH
-type_3      3038     19  1.213627         0        22  Informal
-type_4      3038      9  .3071099         0         8  Unknown
+type_1      3038    149  .0350115         0  2.193011  MBBS
+type_2      3038    424  .1193107         0  3.683755  AYUSH
+type_3      3038    800  .3074948         0  9.634799  Informal
+type_4      3038      1         0         0         0  Unknown
+regsim_1    1202      2   .156406         0         1  Has MBBS
+regsim_2     808      2  .4678218         0         1  Quality > Mean MBBS
+regsim_3     808      2  .2920792         0         1  Quality > Mean MBBS Global
+theta_mle    808    787  .0412417  -4.34731   3.15752  Theta (MLE)
 smses       3038     19  1.320088  .5943771  2.106291  (firstnm) smses
 weight_psu  3038     76  475789.7  68528.98   2016045  (firstnm) weight_psu
 pop_vill    3016   1259  2670.361       251     19903  (firstnm) pop_vill
 patients    2340    373  35.07334         0       550  (sum) patients
-type_10     3038      6  .0473996         0         5  Public MBBS
-type_11     3038      5  .0414747         0         4  Private MBBS
-type_20     3038      7  .0938117         0         6  Public AYUSH
-type_21     3038      9  .2363397         0         8  Private AYUSH
-type_30     3038     12  .3949967         0        15  Public Informal
-type_31     3038     19  .8186307         0        22  Private Informal
-type_40     3038      7  .0536537         0         6  Public Unknown
-type_41     3038      9  .2534562         0         8  Private Unknown
+type_10     3038     73  .0181973         0  2.193011  Public MBBS
+type_11     3038     77  .0168143         0  2.017533  Private MBBS
+type_20     3038     81  .0194714         0  1.655227  Public AYUSH
+type_21     3038    344  .0998393         0  3.683755  Private AYUSH
+type_30     3038     89  .0143393         0  1.808637  Public Informal
+type_31     3038    712  .2931555         0  9.634799  Private Informal
+type_40     3038      1         0         0         0  Public Unknown
+type_41     3038      1         0         0         0  Private Unknown
 u5mr        3038     17  44.69717         7        78  Under-5 Mortality Rate
 uvillid     3038   1519       760         1      1519  Dataset Unique Village ID
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
