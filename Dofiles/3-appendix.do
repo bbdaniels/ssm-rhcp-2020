@@ -139,7 +139,7 @@ use "${directory}/Constructed/M1_providers.dta" if mbbs != . , clear
     tempfile costs
       save `costs' , replace
 
-// Calculate overall patient costs
+// Table 4: Calculate overall patient costs
 use "${directory}/Constructed/M1_providers-simulations.dta", clear
   pq Status Quo
   merge 1:1 state_code using `costs'
@@ -151,6 +151,34 @@ use "${directory}/Constructed/M1_providers-simulations.dta", clear
   export excel ///
     state_code patients medincome pubshare pub_cost fees_total cpp theta_mle ///
     using "${outputsa}/t-costs.xlsx" , replace first(varl)
+
+// Table 5
+  // Counts
+  use "${directory}/Constructed/M2_Vignettes.dta" ///
+    if provtype == 1 | provtype == 6, clear
+
+  gen nonmbbs = 1-mbbs
+
+  bys state_code : egen mbbs_score = mean(theta_mle) if mbbs
+  bys state_code : egen nonmbbs_score = mean(theta_mle) if nonmbbs
+
+  collapse (sum) mbbs nonmbbs (mean) mbbs_score nonmbbs_score, by(state_code) fast // State totals
+  gen mbbs_pct = string(round((mbbs/(mbbs+nonmbbs)),.001)*100) + "%"
+  gen nonmbbs_pct = string(round((nonmbbs/(mbbs+nonmbbs)),.001)*100) + "%"
+  tostring mbbs_score, gen(mbbs_lvl) format(%9.2f) force
+  tostring nonmbbs_score, gen(nonmbbs_lvl) format(%9.2f) force
+
+  lab var state_code "State"
+  lab var mbbs "MBBS Providers"
+  lab var mbbs_pct "MBBS Share"
+  lab var nonmbbs "Non-MBBS Providers"
+  lab var nonmbbs_pct "Non-MBBS Share"
+  lab var mbbs_lvl "MBBS Mean Competence"
+  lab var nonmbbs_lvl "Non-MBBS Mean Competence"
+
+  export excel ///
+    state_code mbbs mbbs_pct nonmbbs nonmbbs_pct mbbs_lvl nonmbbs_lvl ///
+    using "${outputsa}/t-shares.xlsx" , first(varl) replace
 
 // Figure 1: Paramedical provider counts -------------------------------------------------------
 use "${directory}/Constructed/M1_Villages_prov0.dta" , clear
