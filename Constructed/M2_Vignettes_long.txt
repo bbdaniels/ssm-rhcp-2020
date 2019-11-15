@@ -1,12 +1,13 @@
 
-Variable     Obs Unique       Mean      Min   Max  Label
+Variable      Obs Unique       Mean       Min       Max  Label
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uid        21131   7358    3683.14        1  7375  Unique ID
-case       21131      4   2.162652        1     4  Vignette Type
-comp       21131   6026  -.2030385  -4.9972     5  IRT competence score
-treat      21131      2    .794094        0     1  Correct
-statename  21131     19          .        .     .  State
-theta_mle  21131   6056  -.2287411  -4.9972     5  Score
-theta_pct  21131     96   .5011202      .01     1  100 quantiles of theta_mle
-mbbs       21131      2   .2404051        0     1  MBBS
+uid         21131   7358    3683.14         1      7375  Unique ID
+case        21131      4   2.162652         1         4  Vignette Type
+comp        21131   6026  -.2030385   -4.9972         5  IRT competence score
+weight_vig  21131    793   823863.8  68528.98  1.81e+07  Sampling weights in vignettes
+treat       21131      2    .794094         0         1  Correct
+statename   21131     19          .         .         .  State
+theta_mle   21131   6056  -.2287411   -4.9972         5  Score
+theta_pct   21131     96   .5011202       .01         1  100 quantiles of theta_mle
+mbbs        21131      2   .2404051         0         1  MBBS
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

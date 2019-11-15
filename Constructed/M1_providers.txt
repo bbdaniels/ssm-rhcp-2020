@@ -135,6 +135,7 @@ c3med_total    949      7    2.12961         0         6  Number of medicines pr
 c4med_total    892      7    2.23991         0         6  Number of medicines prescribed for dysentery
 comp          1904   1484  -.9749665   -4.9972   2.43664  IRT competence score
 public        1904      2   .1108193         0         1  Public provider (PHC/CHC or village public)
+weight_vig    1904    341   991647.5  68528.98  1.31e+07  Sampling weights in vignettes
 c1antb        1904      2   .2573529         0         1  Prescribed antibiotics for TB
 c2antb        1904      2   .0582983         0         1  Prescribed antibiotics for preeclampsia
 c3antb         949      2   .5152792         0         1  Prescribed antibiotics for diarrhea
@@ -147,6 +148,7 @@ c4steroid      892      2   .0358744         0         1  Prescribed steroids fo
 treat1        1875      2   .5653333         0         1  Provided correct case management for TB
 treat2        1731      2   .3558637         0         1  Provided correct case management for preeclampsia
 dmses         1904    178   1.290246  .2987948  2.373863  District mean of household SES index
+_merge        4335      2   1.878431         1         3  
 treat_n       1897      5   .5316289         0         1  
 diag_n        1886      5   .5531106         0         1  
 antibi_n      1904      5   .2773109         0         1  

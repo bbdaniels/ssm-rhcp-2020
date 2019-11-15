@@ -90,6 +90,7 @@ age           7284     73   38.20071        11       109
 s3q11         5012      3   2.362131         1         3  
 public        7861      2    .767078         0         1  Public provider (PHC/CHC or village public)
 weight_psu    7861    102   489291.9  68528.98   2016045  Weight
+weight_vig    7861    846   832464.5  68528.98  1.81e+07  Sampling weights in vignettes
 uniqdistid    7861    190   9975.147      1001     19010  
 c1antb        7861      2   .1208498         0         1  Prescribed antibiotics for TB
 c2antb        7861      2   .0256965         0         1  Prescribed antibiotics for preeclampsia
