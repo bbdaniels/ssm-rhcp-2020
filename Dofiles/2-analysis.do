@@ -111,55 +111,7 @@
 
 	   graph export "${outputs}/f3-sesshare.eps" , replace
 
-// Figure 4: MBBS - IP Quality correlations ----------------------------------------------------
-
-  use "${directory}/Constructed/M2_Vignettes.dta" ///
-     if provtype == 1 | provtype == 6, clear
-
-  gen count = 1
-
-  // Get graphing points
-  collapse (sum) count (mean) mean = theta_mle (sem) sem = theta_mle , by(mbbs state_code)
-    gen ul = mean + 1.96*sem
-    gen ll = mean - 1.96*sem
-
-  // Set up labelling and ordering
-  bys state_code : egen check = max(mean)
-    sort check mbbs
-    gen n = _n
-
-    local x = 0
-    local y = 0
-    forv i = 1/`c(N)' {
-      replace n = n + `x' in `i'
-      local ++y
-      if `y' == 2 {
-        local ++x
-        local ++x
-        local ++x
-        local ++x
-        local y = 0
-      }
-    }
-
-    gen pos = -4.5
-    gen pos2 = n
-
-  // Graph
-  dlab treat ///
-    using "${directory}/Constructed/M2_Vignettes_long.dta" ///
-    , x(theta_mle) range(-3(1)2) lab(-4) p
-	tw ///
-    (rcap ll ul n , lw(thin) lc(black) hor) ///
-    (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(med)) ///
-    (scatter n mean if mbbs == 1, mc(navy) m(.) msize(med)) ///
-    (scatter pos2 pos if mbbs == 1, mlabpos(3) m(none) ml(state_code) mlabc(black)) ///
-  , yscale(off) xlab(-4.5 " " `r(theLabels)', labsize(small)) ysize(6) ///
-    legend(on size(small) order (2 "Non-MBBS" 3 "MBBS") ring(0) pos(5) c(1))
-
-		graph export "${outputs}/f4-mbbs-ip-quality.eps" , replace
-
-// Figure 5: Excess capacity -------------------------------------------------------------------
+// Figure 4: Excess capacity -------------------------------------------------------------------
 
 	use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , clear
   count
@@ -209,7 +161,55 @@
     xtit("Minutes per Patient {&rarr}")  ytit("Patients per Provider Day") ///
     xlab(5 ":05" 10 ":10" 15 ":15" 20 ":20" 25 ":25" 30 ":30+" , notick)
 
-		graph export "${outputs}/f5-capacity.eps" , replace
+		graph export "${outputs}/f4-capacity.eps" , replace
+
+// Figure 5: MBBS - IP Quality correlations ----------------------------------------------------
+
+  use "${directory}/Constructed/M2_Vignettes.dta" ///
+     if provtype == 1 | provtype == 6, clear
+
+  gen count = 1
+
+  // Get graphing points
+  collapse (sum) count (mean) mean = theta_mle (sem) sem = theta_mle , by(mbbs state_code)
+    gen ul = mean + 1.96*sem
+    gen ll = mean - 1.96*sem
+
+  // Set up labelling and ordering
+  bys state_code : egen check = max(mean)
+    sort check mbbs
+    gen n = _n
+
+    local x = 0
+    local y = 0
+    forv i = 1/`c(N)' {
+      replace n = n + `x' in `i'
+      local ++y
+      if `y' == 2 {
+        local ++x
+        local ++x
+        local ++x
+        local ++x
+        local y = 0
+      }
+    }
+
+    gen pos = -4.5
+    gen pos2 = n
+
+  // Graph
+  dlab treat ///
+    using "${directory}/Constructed/M2_Vignettes_long.dta" ///
+    , x(theta_mle) range(-3(1)2) lab(-4) p
+	tw ///
+    (rcap ll ul n , lw(thin) lc(black) hor) ///
+    (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(med)) ///
+    (scatter n mean if mbbs == 1, mc(navy) m(.) msize(med)) ///
+    (scatter pos2 pos if mbbs == 1, mlabpos(3) m(none) ml(state_code) mlabc(black)) ///
+  , yscale(off) xlab(-4.5 " " `r(theLabels)', labsize(small)) ysize(6) ///
+    legend(on size(small) order (2 "Non-MBBS" 3 "MBBS") ring(0) pos(5) c(1))
+
+		graph export "${outputs}/f5-mbbs-ip-quality.eps" , replace
 
 // ---------------------------------------------------------------------------------------------
 // Simulations ---------------------------------------------------------------------------------
@@ -252,95 +252,9 @@
 
      graph export "${outputs}/f6-status-quo.eps" ,  replace
 
-  save "${directory}/temp/sim-status-quo.dta" , replace
+  save "${directory}/constructed/sim-status-quo.dta" , replace
 
-// Figure 7: AYUSH into public sector ----------------------------------------------------------
-
-  use "${directory}/Constructed/M1_providers-simulations.dta", clear
-
-  gen ppd_old = ppd // Preserve old costs
-
-  // Calculate patients and providers to relocate
-  bys state_code: gen mpats = ppd if type == 4  // Total patients for private ayush
-  bys state_code: gen mdocs = n if type == 4    // Total number of private ayush
-  bys state_code: gen fee = medincome/n if type == 3 // Fee for public ayush
-    infill mpats mdocs fee, by(state_code)           // For each state
-
-  // Relocate patients
-  replace ppd = ppd - (0.5*mpats) if type == 6    // Take from private IPs
-      replace ppd = 0 if ppd < 0                  // Set as 0 if negative
-    replace ppd = ppd + (0.5*mpats) if type == 4  // Give to new public ayush
-  // Move ayush to public
-  replace medincome = fee * n if type == 4        // Reset total public income
-  replace medincome = ppd/ppd_old if type == 6    // Rescale private income
-  replace private = 0 if type == 4
-
-  // Calculate and tabulate
-  pq Public AYUSH
-    append using "${directory}/temp/sim-status-quo.dta"
-    encode case, gen(c)
-    drop case
-    reshape wide theta_mle cpp , i(state_code) j(c)
-
-  dlab treat ///
-    using "${directory}/Constructed/M2_Vignettes_long.dta" ///
-    , x(theta_mle) range(-1(1)2) lab(-1.5) p
-
-  twoway ///
-    (pcarrow  cpp2 theta_mle2 cpp1 theta_mle1 , lc(black) mc(black)) ///
-    (scatter cpp1 theta_mle1 , m(none) mlab(state_code) mlabpos(12) mlabc(black)) ///
-  , legend(on order(1 "Policy: Public AYUSH") ring(0) pos(11) textfirst) ///
-    xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
-     yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
-
-  graph export "${outputs}/f7-public-ayush.eps" ,  replace
-
-// Figure 8: Build out public sector -----------------------------------------------------------
-
-  use "${directory}/Constructed/M1_providers-simulations.dta", clear
-
-  gen ppd_old = ppd // Preserve old costs
-
-  // Calculate new share based on villages with public sector presence
-  bys state_code: egen total = sum(ppd2)
-    gen share = ppd2/total
-    replace share = 0 if share == .
-    drop total
-
-  // Place new public sector MBBS providers in all villages
-  gen n2 = vills if type == 1
-    replace n2 = n if n2 == .
-    replace medincome = medincome*(n2/n) if type == 1 // Scale salary costs
-
-  // Reassign patients
-  bys state_code: egen total = sum(ppd)
-    replace ppd = total * share
-    replace medincome = medincome*(ppd/ppd_old) if private == 1 // Scale fee costs
-
-  // Calculate and tabulate
-  pq PHCs Everywhere
-    append using "${directory}/temp/sim-status-quo.dta"
-    encode case, gen(c)
-    drop case
-    reshape wide theta_mle cpp , i(state_code) j(c)
-
-  replace cpp1 = 95 if state_code == 5 // Gujarat OVERFLOW
-    label def state_code 5 "Gujarat* (132)" , modify
-
-  dlab treat ///
-    using "${directory}/Constructed/M2_Vignettes_long.dta" ///
-    , x(theta_mle) range(-1(1)2) lab(-1.5) p
-
-  twoway ///
-    (pcarrow  cpp2 theta_mle2 cpp1 theta_mle1 , lc(black) mc(black)) ///
-    (scatter cpp1 theta_mle1 , m(none) mlab(state_code) mlabpos(12) mlabc(black)) ///
-  , legend(on order(1 "Policy: PHCs everywhere") ring(0) pos(11) textfirst) ///
-    xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
-     yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
-
-     graph export "${outputs}/f8-phcs-everywhere.eps" ,  replace
-
-// Figure 9: Quality cutoffs -------------------------------------------------------------------
+// Figure 7: Quality cutoffs -------------------------------------------------------------------
 
 use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
@@ -379,7 +293,93 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
         4 "Villages with providers better than national average MBBS")) ///
     ylab(${pct}) ytit("Proportion of villages {&rarr}") yscale(r(0) noline) noextendline ysize(6)
 
-    graph export "${outputs}/f9-quality-regulation.eps" ,  replace
+    graph export "${outputs}/f7-quality-regulation.eps" ,  replace
+
+// Figure 8: AYUSH into public sector ----------------------------------------------------------
+
+  use "${directory}/Constructed/M1_providers-simulations.dta", clear
+
+  gen ppd_old = ppd // Preserve old costs
+
+  // Calculate patients and providers to relocate
+  bys state_code: gen mpats = ppd if type == 4  // Total patients for private ayush
+  bys state_code: gen mdocs = n if type == 4    // Total number of private ayush
+  bys state_code: gen fee = medincome/n if type == 3 // Fee for public ayush
+    infill mpats mdocs fee, by(state_code)           // For each state
+
+  // Relocate patients
+  replace ppd = ppd - (0.5*mpats) if type == 6    // Take from private IPs
+      replace ppd = 0 if ppd < 0                  // Set as 0 if negative
+    replace ppd = ppd + (0.5*mpats) if type == 4  // Give to new public ayush
+  // Move ayush to public
+  replace medincome = fee * n if type == 4        // Reset total public income
+  replace medincome = ppd/ppd_old if type == 6    // Rescale private income
+  replace private = 0 if type == 4
+
+  // Calculate and tabulate
+  pq Public AYUSH
+    append using "${directory}/constructed/sim-status-quo.dta"
+    encode case, gen(c)
+    drop case
+    reshape wide theta_mle cpp , i(state_code) j(c)
+
+  dlab treat ///
+    using "${directory}/Constructed/M2_Vignettes_long.dta" ///
+    , x(theta_mle) range(-1(1)2) lab(-1.5) p
+
+  twoway ///
+    (pcarrow  cpp2 theta_mle2 cpp1 theta_mle1 , lc(black) mc(black)) ///
+    (scatter cpp1 theta_mle1 , m(none) mlab(state_code) mlabpos(12) mlabc(black)) ///
+  , legend(on order(1 "Policy: Public AYUSH") ring(0) pos(11) textfirst) ///
+    xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
+     yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
+
+  graph export "${outputs}/f8-public-ayush.eps" ,  replace
+
+// Figure 9: Build out public sector -----------------------------------------------------------
+
+  use "${directory}/Constructed/M1_providers-simulations.dta", clear
+
+  gen ppd_old = ppd // Preserve old costs
+
+  // Calculate new share based on villages with public sector presence
+  bys state_code: egen total = sum(ppd2)
+    gen share = ppd2/total
+    replace share = 0 if share == .
+    drop total
+
+  // Place new public sector MBBS providers in all villages
+  gen n2 = vills if type == 1
+    replace n2 = n if n2 == .
+    replace medincome = medincome*(n2/n) if type == 1 // Scale salary costs
+
+  // Reassign patients
+  bys state_code: egen total = sum(ppd)
+    replace ppd = total * share
+    replace medincome = medincome*(ppd/ppd_old) if private == 1 // Scale fee costs
+
+  // Calculate and tabulate
+  pq PHCs Everywhere
+    append using "${directory}/constructed/sim-status-quo.dta"
+    encode case, gen(c)
+    drop case
+    reshape wide theta_mle cpp , i(state_code) j(c)
+
+  replace cpp1 = 95 if state_code == 5 // Gujarat OVERFLOW
+    label def state_code 5 "Gujarat* (132)" , modify
+
+  dlab treat ///
+    using "${directory}/Constructed/M2_Vignettes_long.dta" ///
+    , x(theta_mle) range(-1(1)2) lab(-1.5) p
+
+  twoway ///
+    (pcarrow  cpp2 theta_mle2 cpp1 theta_mle1 , lc(black) mc(black)) ///
+    (scatter cpp1 theta_mle1 , m(none) mlab(state_code) mlabpos(12) mlabc(black)) ///
+  , legend(on order(1 "Policy: PHCs everywhere") ring(0) pos(11) textfirst) ///
+    xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
+     yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
+
+     graph export "${outputs}/f9-phcs-everywhere.eps" ,  replace
 
 // ---------------------------------------------------------------------------------------------
 // Tables --------------------------------------------------------------------------------------
