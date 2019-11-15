@@ -368,4 +368,14 @@ import excel using "${datadir}/Data/Raw/PHC-Provider/PHC_ProviderLong.xlsx" ///
 
 dataset "${directory}/Constructed/M2_providers.dta"
 
+// Birbhum data
+use "/Users/bbdaniels/Dropbox/Research/_Archive/Birbhum/BirbhumEvaluation/Constructed/analysis_pope.dta" , clear
+
+  gen po_n = 1
+
+  collapse (mean) prov_n = c2_s1q2 po_timetot prov_timetot = c1_s2q12 (sum) po_n , by(providerid)
+
+dataset "${directory}/Constructed/birbhum-demand.dta"
+
+
 * Have a lovely day!

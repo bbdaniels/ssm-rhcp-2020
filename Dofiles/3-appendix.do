@@ -245,11 +245,20 @@ use "${directory}/Constructed/birbhum-demand.dta" , clear
 
   tw ///
     (function x , range(0 40) lp(dash) lc(gray)) ///
-    (scatter po_n c2_s1q2, jitter(2)) ///
-    (lpoly po_n c2_s1q2, lc(black)) ///
+    (scatter po_n prov_n, jitter(2)) ///
+    (lpoly po_n prov_n, lc(black)) ///
   , ytit("Observed Caseload") xtit("Self-Reported Daily Caseload") ///
     legend(on order(3 "Relationship in Data") ring(0) pos(11))
 
     graph export "${outputsa}/f-caseload.eps" , replace
+
+  tw ///
+    (function x , range(0 40) lp(dash) lc(gray)) ///
+    (scatter po_timetot prov_timetot, jitter(2)) ///
+    (lpoly po_timetot prov_timetot, lc(black)) ///
+  , ytit("Observed Time per Patient") xtit("Self-Reported Time per Patient") ///
+    legend(on order(3 "Relationship in Data") ring(0) pos(11))
+
+    graph export "${outputsa}/f-time.eps" , replace
 
 // Have a lovely day! --------------------------------------------------------------------------

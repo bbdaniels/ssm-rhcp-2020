@@ -1,6 +1,6 @@
 
 Variable       Obs Unique       Mean        Min       Max  Label
---------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 stateid       7375     19   9.996068          1        19  State ID
 c1h1          7357      2   .2104119          0         1  C1 Item 1: Night Sweats
 rel11         7357      2   .4875629          0         1  C1 Item 2: Blood in Sputum
@@ -76,7 +76,6 @@ practype      7375      2   1.215322          1         2  Government or Private
 provtype      7310      6   1.916963          1         6  
 degreetype    7375      3   1.585085          1         3  
 male          7195      2   .5110493          0         1  Provider is male
-sum_infra     7375     12   8.527186          0        11  
 villid        2259     88   42.08942          1        88  Village ID
 finclinid_~w  2259   2122   1.09e+08   1.01e+07  1.91e+08  Village sample clinic ID
 finprovid_~w  2259   2177   1.09e+10   1.01e+09  1.91e+10  Village sample provider ID
@@ -91,7 +90,6 @@ age           7168     73   38.21694         11       109
 s3q11         4934      3   2.364816          1         3  
 public        7375      2    .784678          0         1  Public provider (PHC/CHC or village public)
 weight_psu    7375    102   492018.1   68528.98   2016045  Weight
-general       2247      2   .4717401          0         1  
 uniqdistid    7375    190   10002.25       1001     19010  
 c1antb        7375      2   .1164746          0         1  Prescribed antibiotics for TB
 c2antb        7375      2   .0241356          0         1  Prescribed antibiotics for preeclampsia
@@ -107,7 +105,6 @@ treat2        6759      2   .6745081          0         1  Provided correct case
 private       7375      2    .215322          0         1  Private provider
 dmses         7361    187   1.282975   .2987948  2.373863  District mean of household SES index
 smses         7375     19   1.271204   .5943771  2.106291  State mean of household SES index
-perform       7375      2   1.549695          1         2  State performance category by SES
 mbbs          7375      2   .2417627          0         1  Has MBBS degree
 ayush         7375      2   .1015593          0         1  Has AYUSH degree
 othernone     7375      2    .656678          0         1  Has neither MBBS nor AYUSH
@@ -131,7 +128,6 @@ s1q15         2008     14  -6.133964        -99        25  number of providers
 s2q16         2007     20   11.79621          1        60  time per patient
 patients      2006     47   17.41974          0       350  
 fees_total    1961     29   17.84651          0       350  
-matched       7375      2   .2733559          0         1  RECODE of _merge
 check         1998    112   13.02315  -.6060606       200  
 income        1951    146   207.4696  -30.30303      6000  
---------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
