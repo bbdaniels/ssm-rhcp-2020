@@ -416,7 +416,7 @@ use "${directory}/Constructed/M1_providers.dta" , clear
         est sto Performance
         predict performance
 
-      coefplot Completion Performance, $graph_opts xline(0) ///
+      coefplot Completion Performance, xline(0) ///
         legend(on ring(0) pos(1) c(1)) ciopts(lc(gray)) msize(medium)
 
         graph export "${outputsa}/f-ipw-lasso.eps" , replace
