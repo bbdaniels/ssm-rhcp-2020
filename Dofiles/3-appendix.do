@@ -401,7 +401,7 @@ use "${directory}/Constructed/M1_providers.dta" , clear
 
   // LASSO
     qui elasticnet linear vignette ///
-      private mbbs male s3q11_* otherjob_none age ///
+      priv mbbs male s3q11_* otherjob_none age ///
       patients fees_total s2q16 ///
       i.s3q4 i.s3q5 i.s2q20a i.s3q2
 
@@ -417,8 +417,9 @@ use "${directory}/Constructed/M1_providers.dta" , clear
         predict performance
 
       coefplot Completion Performance, $graph_opts xline(0) ///
-        title(Effect of Selected Variables on Vignettes) ///
-        legend(on pos(11))
+        legend(on ring(0) pos(1) c(1)) ciopts(lc(gray)) msize(medium)
+
+        graph export "${outputsa}/f-ipw-lasso.eps" , replace
 
 
      // IPW Status quo cost and quality -------------------------------------------------------
