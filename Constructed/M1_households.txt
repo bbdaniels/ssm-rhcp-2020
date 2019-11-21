@@ -1,14 +1,17 @@
 
 Variable         Obs Unique      Mean       Min       Max  Label
---------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------
 stateid       113076     19  9.975715         1        19  State ID
 statename     113076     19         .         .         .  State Name
 villid        113076     90  41.13098         1       108  Village ID
-s4q6           16075      6  2.465879         0         5  Location of clinic
-htag          113076      2  .1994588         0         1  tag(finhhid)
-male          112664      2  .5294682         0         1  
-age           112998    101  28.57736         0       100  
-treat          17147      2  .9390564         0         1  
+s3q4          112998    101  28.57736         0       100  Age
+s3q5          112492      7  2.321507       -77         6  Education
+s4q6           16075      6  2.465879         0         5  Location of Clinic
+provider_v~e  113076     10  .2202943         0        10  Village
+htag          113076      2  .1994588         0         1  Household Tag
+male          112664      2  .5294682         0         1  Male
+age           112998    101  28.57736         0       100  Age
+prov_nombbs    16001      2  .1968002         0         1  Non-MBBS
 fan           112565      2  .6170657         0         1  Electric fan
 cooker        112476      2  .3317774         0         1  Pressure cooker
 mobilephone   112524      2  .5576055         0         1  Mobile phone
@@ -16,13 +19,17 @@ bike          112416      2  .1889856         0         1  Bicycle
 finclinid       2627    891  1.18e+08  1.01e+07  1.91e+08  Clinic ID
 provtype        2346      6  1.461637         1         6  Provider Type
 practype        2346      2  1.794118         1         2  Government or Private
-finclinid_~w    2346    809  1.19e+08  1.01e+07  1.91e+08  
-finprovid_~w    2346    828  1.19e+10  1.01e+09  1.91e+10  
-degreetype      2346      3  1.324808         1         3  
-vtag          113076      2  .0133804         0         1  tag(stateid villid)
+finclinid_~w    2346    809  1.19e+08  1.01e+07  1.91e+08  Clinic ID
+finprovid_~w    2346    828  1.19e+10  1.01e+09  1.91e+10  Clinic ID
+degreetype      2346      3  1.324808         1         3  Degree Type
+match           2627      1         1         1         1  has a matching provider ID
+treat_prim~y   16996      2   .617204         0         1  
+vtag          113076      2  .0133804         0         1  Village Tag
+nvill         113076     18    28.575         6        79  Number of Villates
 roof          113076      2  .5194117         0         1  Concrete or metal roof
 tv            113076      2  .4640861         0         1  Television
 water         112549      2  .3508783         0         1  Piped water
 non_scst      111943      2  .6794261         0         1  Not Scheduled Caste/Tribe
 adultprieduc  112982     48  .5210847         0         1  Adult primary education
---------------------------------------------------------------------------------------
+assetindex    106830    206  1.336322         0  2.779827  PCA index of asset
+-------------------------------------------------------------------------------------------------------------------------------------------------------

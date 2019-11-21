@@ -3,13 +3,17 @@ cap prog drop dataset
     prog def  dataset
     syntax anything
 
+    local excel = subinstr(`"`anything'"',".dta",".xlsx",.)
+    iecodebook apply using `excel'
+
     iecodebook export using `anything' ///
-      , copy hash text reset replace trim( ///
+      , copy hash text replace trim( ///
           "${directory}/dofiles/1-makedata.do" ///
           "${directory}/dofiles/2-analysis.do" ///
           "${directory}/dofiles/3-appendix.do" ///
           "${directory}/dofiles/4-textstats.do" ///
         )
+
 end
 
 // M1 Household Survey
@@ -27,7 +31,9 @@ use "${datadir}/Data/Raw/Maqari1/Household_data2.dta" , clear
 
   replace statename = proper(statename)
 
-dataset "${directory}/Constructed/M1_households.xlsx"
+  drop s3q2
+
+dataset "${directory}/Constructed/M1_households.dta"
 	  use "${directory}/Constructed/M1_households.dta" , clear
 
 // M1 Private providers
@@ -420,6 +426,11 @@ use "/Users/bbdaniels/Dropbox/Research/_Archive/Birbhum/BirbhumEvaluation/Constr
   gen po_n = 1
 
   collapse (mean) prov_n = c2_s1q2 po_timetot prov_timetot = c1_s2q12 (sum) po_n , by(providerid)
+
+  lab var prov_n "Number of Patients Reported"
+  lab var prov_timetot "Time per Patient Reported"
+  lab var po_n "Number of Patients Observed"
+  lab var po_timetot "Time per Patient Observed"
 
 dataset "${directory}/Constructed/birbhum-demand.dta"
 

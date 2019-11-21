@@ -1,15 +1,15 @@
 
 Variable    Obs Unique      Mean      Min       Max  Label
 -------------------------------------------------------------------------------------------------------------------------------------------------------
-state_code  143     19  9.993007        1        19  state name
-type        143      8  4.573427        1         8  group(type private)
-n           143     58  30.31469        1       454  (rawsum) n
-ppd         143    100  352.6218        0      4518  (rawsum) ppd
-ppd2        143     73  136.1882        0    2277.5  (rawsum) ppd2
-medincome   143    100  133711.6        0   1255150  (rawsum) medincome
-fees_total  105     77  16.97098        0  108.6364  (mean) fees_total
-theta_pct   126    118  .5849208      .03     .9875  (mean) theta_pct
-theta_mle   126    125  .2848193  -3.4929  2.061117  (mean) theta_mle
-private     143      2  .5104895        0         1  (mean) private
-vills       143     17  57.77622       20        85  
+state_code  143     19  9.993007        1        19  State Name
+type        143      8  4.573427        1         8  Type
+n           143     58  30.31469        1       454  N
+ppd         143    100  352.6218        0      4518  Patients per day
+ppd2        143     73  136.1882        0    2277.5  Patients per day (alternate)
+medincome   143    100  133711.6        0   1255150  Medical Income
+fees_total  105     77  16.97098        0  108.6364  Total Fees
+theta_pct   126    118  .5849208      .03     .9875  Competence Percentile
+theta_mle   126    125  .2848193  -3.4929  2.061117  Competence Score
+private     143      2  .5104895        0         1  Private
+vills       143     17  57.77622       20        85  Villages
 -------------------------------------------------------------------------------------------------------------------------------------------------------

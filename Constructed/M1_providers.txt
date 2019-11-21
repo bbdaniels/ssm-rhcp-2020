@@ -22,35 +22,33 @@ s3q4          3473      5   3.130147         1         5  caste
 s3q5          3474      6   1.327288         1         6  religion
 s3q11         3468      3   2.019608         1         3  education
 clinicserial  4274     37   6.014038         0        89  serial number
-finclinid_~w  4335   4035   1.11e+08  1.02e+07  1.91e+08  
-finprovid_~w  4335   4236   1.11e+10  1.02e+09  1.91e+10  
-nosurvey      4335      2   .1988466         0         1  
-survey        4335      2   .8011534         0         1  
-permagone     4314      2   .0190079         0         1  
-tempgone      4314      2   .1432545         0         1  
-refuse        4314      2   .0319889         0         1  
-noreason      4335      2   .0048443         0         1  
-private       4335      2   .8625144         0         1  
-doctor        4335      2   .8419839         0         1  
-patients      3468     50   15.84516         0       350  
-fees_total    3367     40   22.20879         0       500  
-meds          3463      2   .9188565         0         1  
-age           3446     71   40.37174        15        89  
+finclinid_~w  4335   4035   1.11e+08  1.02e+07  1.91e+08  Clinic ID
+finprovid_~w  4335   4236   1.11e+10  1.02e+09  1.91e+10  Clinic ID
+nosurvey      4335      2   .1988466         0         1  Not Surveyed
+survey        4335      2   .8011534         0         1  Surveyed
+permagone     4314      2   .0190079         0         1  Gone Permanently
+tempgone      4314      2   .1432545         0         1  Gone Temporarily
+refuse        4314      2   .0319889         0         1  Refused
+noreason      4335      2   .0048443         0         1  No Reason Given
+private       4335      2   .8625144         0         1  Private
+doctor        4335      2   .8419839         0         1  Doctor
+patients      3468     50   15.84516         0       350  Number of Patients
+fees_total    3367     40   22.20879         0       500  Total Fees
+meds          3463      2   .9188565         0         1  Medications
+age           3446     71   40.37174        15        89  Age
 male          3472      2   .8945853         0         1  Providers Who: Are Male
-general       3473      2   .4457242         0         1  
 otherjob_n~e  3473      2   .6665707         0         1  Have No Other Occupation
-medincome     3399    176   5625.406         0    600000  
-totalincome   3399    266   6839.861         0    600000  
-degreetype    3499      3   1.392684         1         3  
-esteril       3446      2   .1935577         0         1  
-sum_infra     3439     12   6.359988         0        11  
-asha          4335      1          0         0         0  
+medincome     3399    176   5625.406         0    600000  Medical Income
+totalincome   3399    266   6839.861         0    600000  Total Income
+degreetype    3499      3   1.392684         1         3  Degree Type
+sum_infra     3439     12   6.359988         0        11  Infrastructure
+asha          4335      1          0         0         0  ASHA
 provider      4335      2   .8207612         0         1  is a medical provider
 mbbs          3499      2   .0754501         0         1  Have MBBS degree
 ayush         3499      2   .2332095         0         1  Have AYUSH degree
 othernone     3499      2   .5092884         0         1  Do not have MBBS or AYUSH
-uniqdistid    4335    185   11006.92      1002     19010  
-vtag          4335      2     .15594         0         1  tag(stateid villid)
+uniqdistid    4335    185   11006.92      1002     19010  District ID
+vtag          4335      2     .15594         0         1  Village Tag
 weight_psu    4335     75   527268.8  68528.98   2016045  Weight
 pop_vill      4314    972   3704.452       258     19903  Village population size
 smses         4335     19   1.266228  .5943771  2.106291  State mean of household SES index
@@ -61,10 +59,10 @@ s3q11_3       4335      2    .244752         0         1  Have Advanced Educatio
 age_2040      4335      2    .433218         0         1  Are Now Aged 20-40
 age_4060      4335      2   .3074971         0         1  Are Now Aged 40-60
 age_60up      4335      2   .2592849         0         1  Are Now Aged 60+
-agestart      3430     64   26.63673        -5        86  
+agestart      3430     64   26.63673        -5        86  Age Began Practice
 age_2030      4335      2   .5658593         0         1  Began Practice Aged 20-30
 u5mr          4335     17   45.94325         7        78  State Under-5 Mortality Rate
-type          4335      4   2.875894         1         4  
+type          4335      4   2.875894         1         4  Type
 c1h1          1895      2   .1477573         0         1  C1 Item 1: Night Sweats
 rel11         1895      2   .3398417         0         1  C1 Item 2: Blood in Sputum
 c1h3          1895      2   .1229551         0         1  C1 Item 3: Chest Pain
@@ -154,19 +152,10 @@ c4steroid      892      2   .0358744         0         1  Prescribed steroids fo
 treat1        1875      2   .5653333         0         1  Provided correct case management for TB
 treat2        1731      2   .3558637         0         1  Provided correct case management for preeclampsia
 dmses         1904    178   1.290246  .2987948  2.373863  District mean of household SES index
-_merge        4335      2   1.878431         1         3  
-treat_n       1897      5   .5316289         0         1  
-diag_n        1886      5   .5531106         0         1  
-antibi_n      1904      5   .2773109         0         1  
-qh_n1         1895      8   .8559367         0         7  
-qe_n1         1895     12    2.14723         0        11  
-qh_n2         1863     16   2.173913         0        15  
-qe_n2         1863     13     1.8073         0        12  
-qh_n3         1130      6    1.20177         0         5  
-qe_n3         1130     10   .8433628         0        10  
-qh_n4         1067      6   1.222118         0         5  
-qe_n4         1067     10   .7441425         0         9  
-uid           4335   4335       2168         1      4335  
+treat_n       1897      5   .5316289         0         1  Correct Treatments
+diag_n        1886      5   .5531106         0         1  Correct Diagnoses
+antibi_n      1904      5   .2773109         0         1  Antibiotics
+uid           4335   4335       2168         1      4335  UID
 theta_mle     1701   1510  -.0013189  -4.39023   3.15752  Theta (MLE)
 theta_pct     1701    100   .5045855       .01         1  100 quantiles of theta_mle
 vignette      4335      2   .3923875         0         1  Completed Vignette
