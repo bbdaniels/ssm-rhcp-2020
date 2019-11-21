@@ -1,6 +1,7 @@
 * Master for MSP Project
 
 	global directory "/Users/bbdaniels/github/ssm-rhcp-2019/"
+	global datadir   "/Users/bbdaniels/Dropbox/Research/SSM-Papers/"
 
 	set matsize 5000
 
@@ -9,7 +10,7 @@
 	local adoFiles : dir `"${directory}/adofiles/"' files "*.ado"
 	local adoFiles = subinstr(`" `adoFiles' "', `"""' , "" , .)
 	foreach adoFile in `adoFiles' {
-		qui do "${directory}/adofiles/`adoFile'"
+		qui run "${directory}/adofiles/`adoFile'"
 		}
 
 * Globals

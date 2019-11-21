@@ -1,5 +1,23 @@
+// Data transfer program
+cap prog drop dataset
+    prog def  dataset
+    syntax anything
+
+    local excel = subinstr(`"`anything'"',".dta",".xlsx",.)
+    iecodebook apply using `excel'
+
+    iecodebook export using `anything' ///
+      , copy hash text replace trim( ///
+          "${directory}/dofiles/1-makedata.do" ///
+          "${directory}/dofiles/2-analysis.do" ///
+          "${directory}/dofiles/3-appendix.do" ///
+          "${directory}/dofiles/4-textstats.do" ///
+        )
+
+end
+
 // M1 Household Survey
-use "${directory}/Data/Raw/Maqari1/Household_data2.dta" , clear
+use "${datadir}/Data/Raw/Maqari1/Household_data2.dta" , clear
 
 	label var roof "Concrete or metal roof"
 	label var tv "Television"
@@ -13,12 +31,14 @@ use "${directory}/Data/Raw/Maqari1/Household_data2.dta" , clear
 
   replace statename = proper(statename)
 
-save "${directory}/Constructed/M1_households.dta" , replace
-	use "${directory}/Constructed/M1_households.dta" , clear
+  drop s3q2
+
+dataset "${directory}/Constructed/M1_households.dta"
+	  use "${directory}/Constructed/M1_households.dta" , clear
 
 // M1 Private providers
 
-use "${directory}/Data/Raw/Maqari1/VillageProvider1.dta" ///
+use "${datadir}/Data/Raw/Maqari1/VillageProvider1.dta" ///
   if provtype == 1 | provtype == 6, clear
   drop if s2q6 == 6 // Chemists
 
@@ -83,7 +103,7 @@ use "${directory}/Data/Raw/Maqari1/VillageProvider1.dta" ///
   // IRT
 
   merge 1:m finclinid_new finprovid_new ///
-    using "$directory/Data/Raw/Maqari1/Combined_vignettes3.dta" ///
+    using "${datadir}/Data/Raw/Maqari1/Combined_vignettes3.dta" ///
     , keep(1 3)
 
 
@@ -120,19 +140,23 @@ use "${directory}/Data/Raw/Maqari1/VillageProvider1.dta" ///
 
 	// easyirt `r(varlist)' using "${directory}/Data/Clean/M2_Vignettes_IRT.dta" , id(uid)
 
-		merge 1:1 uid using "${directory}/Data/Clean/M2_Vignettes_IRT.dta" ///
+
+		merge 1:1 uid using "${datadir}/Data/Clean/M2_Vignettes_IRT.dta" ///
     , nogen keepusing(theta_mle) keep(3)
 
-    replace theta_mle = . if theta_mle < -4.5 
+    replace theta_mle = . if theta_mle < -4.5
 			xtile theta_pct = theta_mle , n(100)
 				replace theta_pct = theta_pct / 100
 
+    gen vignette = theta_mle != .
+      label var vignette "Completed Vignette"
 
-save "${directory}/Constructed/M1_providers.dta" , replace
+
+dataset "${directory}/Constructed/M1_providers.dta"
 	use "${directory}/Constructed/M1_providers.dta" , clear
 
 // M1 Villages
-use "${directory}/Data/Raw/Maqari1/VillageProvider1.dta" , clear
+use "${datadir}/Data/Raw/Maqari1/VillageProvider1.dta" , clear
 
   // Cleaning
   drop vtag
@@ -283,7 +307,7 @@ preserve
     label var uvillid "Dataset Unique Village ID"
 
 
-save "${directory}/Constructed/M1_Villages_prov`type'.dta" , replace
+dataset "${directory}/Constructed/M1_Villages_prov`type'.dta"
 restore
 }
 
@@ -318,6 +342,97 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
       drop vtag
       rename check type
 
-  save "${directory}/Constructed/M1_providers-simulations.dta" , replace
+  dataset "${directory}/Constructed/M1_providers-simulations.dta"
+
+// Cost simulations data setup -- reweighted
+
+  use "${directory}/Constructed/M1_providers.dta" , clear
+  replace public = 1-private
+
+  // Create categories
+  egen check = group(type private) , label
+
+  // Calculate patients and adjust for public clinics
+  gen ppd = patients
+    bys stateid finclinid_new: gen ndocs = _N
+    replace ppd = ppd/ndocs if public == 1
+    replace patients = patients/ndocs if public == 1
+
+  // Flag for public sector MBBS availability and shares calculation
+  gen pubdoc = type == 1
+    bys state_code villid: egen anypub = max(pubdoc)
+    gen ppd2 = patients if anypub == 1
+
+  // Weighting
+  qui elasticnet linear vignette ///
+    private mbbs male s3q11_* otherjob_none age ///
+    patients fees_total s2q16 ///
+    i.s3q4 i.s3q5 i.s2q20a i.s3q2
+
+    // s3q4 s3q5 s2q20a s3q2
+
+    lassoselect id = `e(ID_sel)'
+      local covars = "`e(othervars_sel)'"
+    reg vignette `covars'
+      predict completion
+
+  // Collapse to average village shares within state
+  gen n = 1
+    drop vtag
+    egen vtag = tag(state_code villid)
+  collapse (rawsum) vtag n ppd ppd2 medincome ///
+    (mean) fees_total theta_pct theta_mle private ///
+     [pweight=completion] ///
+    , by(state_code check) fast
+
+      bys state_code: egen vills = sum(vtag)
+      drop vtag
+      rename check type
+
+  dataset "${directory}/Constructed/M1_providers-simulations-weight.dta"
+
+// Get vignettes data
+
+  use "${datadir}/Constructed/M2_Vignettes.dta"
+  dataset "${directory}/Constructed/M2_Vignettes.dta"
+
+  use "${datadir}/Constructed/M2_Vignettes_long.dta"
+  dataset "${directory}/Constructed/M2_Vignettes_long.dta"
+
+  use "${datadir}/Data/Raw/Maqari1/Combined_vignettes3.dta"
+  dataset "${directory}/Constructed/Combined_vignettes3.dta"
+
+// PHC data
+
+import excel using "${datadir}/Data/Raw/PHC-Provider/PHC_ProviderLong.xlsx" ///
+  , first clear
+
+  foreach var of varlist * {
+    local theLabel = `var'[1]
+    lab var `var' "`theLabel'"
+  }
+    drop in 1/2
+
+  destring s6q12 , replace force
+    replace s6q12 = . if s6q12 < 0
+
+  encode s1q3 , gen(state_code)
+
+dataset "${directory}/Constructed/M2_providers.dta"
+
+// Birbhum data
+use "/Users/bbdaniels/Dropbox/Research/_Archive/Birbhum/BirbhumEvaluation/Constructed/analysis_pope.dta" , clear
+
+  gen po_n = 1
+
+  collapse (mean) prov_n = c2_s1q2 po_timetot prov_timetot = c1_s2q12 (sum) po_n , by(providerid)
+
+  lab var prov_n "Number of Patients Reported"
+  lab var prov_timetot "Time per Patient Reported"
+  lab var po_n "Number of Patients Observed"
+  lab var po_timetot "Time per Patient Observed"
+
+dataset "${directory}/Constructed/birbhum-demand.dta"
+
 
 * Have a lovely day!

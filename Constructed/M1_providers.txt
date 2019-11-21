@@ -1,0 +1,162 @@
+
+Variable       Obs Unique       Mean       Min       Max  Label
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+serial        4320   4039   1.20e+07  1.20e+07  1.30e+07  serial number
+stateid       4335     19   11.00092         1        19  state id
+statename     4335     19          .         .         .  state name
+districtname  4335    233          .         .         .  district name
+villid        4335     88   42.65306         1        88  village id
+finclinid     4335   4036   1.11e+08   3100669  1.91e+08  clinic id 2
+provtype      4335      2   1.790081         1         6  Provider Type
+practype      4335      2   1.862514         1         2  Government or Private
+s1q3          4278      9    2.02618         1         9  translator id
+s1q15         4298     17  -5.542811       -99        32  number of providers
+s2q6          4335      3   2.231834         1         9  practice type
+s2q14a        3464     57   1995.297      1950      2009  year started
+s2q15         3468     50   15.84516         0       350  pateints per day
+s2q16         3468     25   11.79527         0        60  time per patient
+s2q20a        3466      8   2.260242         1         8  rent or own
+s3q1          3446     71   1968.628      1920      1994  birthyear
+s3q2          3474      6   2.207542         1         6  birthplace
+s3q4          3473      5   3.130147         1         5  caste
+s3q5          3474      6   1.327288         1         6  religion
+s3q11         3468      3   2.019608         1         3  education
+clinicserial  4274     37   6.014038         0        89  serial number
+finclinid_~w  4335   4035   1.11e+08  1.02e+07  1.91e+08  Clinic ID
+finprovid_~w  4335   4236   1.11e+10  1.02e+09  1.91e+10  Clinic ID
+nosurvey      4335      2   .1988466         0         1  Not Surveyed
+survey        4335      2   .8011534         0         1  Surveyed
+permagone     4314      2   .0190079         0         1  Gone Permanently
+tempgone      4314      2   .1432545         0         1  Gone Temporarily
+refuse        4314      2   .0319889         0         1  Refused
+noreason      4335      2   .0048443         0         1  No Reason Given
+private       4335      2   .8625144         0         1  Private
+doctor        4335      2   .8419839         0         1  Doctor
+patients      3468     50   15.84516         0       350  Number of Patients
+fees_total    3367     40   22.20879         0       500  Total Fees
+meds          3463      2   .9188565         0         1  Medications
+age           3446     71   40.37174        15        89  Age
+male          3472      2   .8945853         0         1  Providers Who: Are Male
+otherjob_n~e  3473      2   .6665707         0         1  Have No Other Occupation
+medincome     3399    176   5625.406         0    600000  Medical Income
+totalincome   3399    266   6839.861         0    600000  Total Income
+degreetype    3499      3   1.392684         1         3  Degree Type
+sum_infra     3439     12   6.359988         0        11  Infrastructure
+asha          4335      1          0         0         0  ASHA
+provider      4335      2   .8207612         0         1  is a medical provider
+mbbs          3499      2   .0754501         0         1  Have MBBS degree
+ayush         3499      2   .2332095         0         1  Have AYUSH degree
+othernone     3499      2   .5092884         0         1  Do not have MBBS or AYUSH
+uniqdistid    4335    185   11006.92      1002     19010  District ID
+vtag          4335      2     .15594         0         1  Village Tag
+weight_psu    4335     75   527268.8  68528.98   2016045  Weight
+pop_vill      4314    972   3704.452       258     19903  Village population size
+smses         4335     19   1.266228  .5943771  2.106291  State mean of household SES index
+state_code    4335     19   11.00092         1        19  state name
+s3q11_1       4335      2   .2290657         0         1  Have Grade 10 Education
+s3q11_2       4335      2   .3261822         0         1  Have Grade 10+2 Education
+s3q11_3       4335      2    .244752         0         1  Have Advanced Education
+age_2040      4335      2    .433218         0         1  Are Now Aged 20-40
+age_4060      4335      2   .3074971         0         1  Are Now Aged 40-60
+age_60up      4335      2   .2592849         0         1  Are Now Aged 60+
+agestart      3430     64   26.63673        -5        86  Age Began Practice
+age_2030      4335      2   .5658593         0         1  Began Practice Aged 20-30
+u5mr          4335     17   45.94325         7        78  State Under-5 Mortality Rate
+type          4335      4   2.875894         1         4  Type
+c1h1          1895      2   .1477573         0         1  C1 Item 1: Night Sweats
+rel11         1895      2   .3398417         0         1  C1 Item 2: Blood in Sputum
+c1h3          1895      2   .1229551         0         1  C1 Item 3: Chest Pain
+c1h4          1895      2   .0986807         0         1  C1 Item 4: Happened Before
+c1h5          1895      2   .0881266         0         1  C1 Item 5: Happened to Others in Family
+c1h6          1895      2   .0158311         0         1  C1 Item 6: High Risk Sex
+c1e2          1895      2   .1124011         0         1  C1 Item 9: Respiratory Rate
+c1e3          1895      2   .2633245         0         1  C1 Item 10: Blood Pressure
+c1e4          1895      2   .2949868         0         1  C1 Item 11: Temperature
+c1e5          1895      2   .0337731         0         1  C1 Item 12: Chest Inspection
+c1e6          1895      2   .0844327         0         1  C1 Item 13: Chest Percussion
+c1e7          1895      2    .046438         0         1  C1 Item 14: Auscultation
+c1e8          1895      2   .3129288         0         1  C1 Item 15: Blood TLC/DLC
+c1e9          1895      2   .3846966         0         1  C1 Item 16: Sputum Test for AFB
+rel12         1895      2   .3614776         0         1  C1 Item 17: Chest X-Ray
+c2h1          1863      2   .2887815         0         1  C2 Item 19: Severity of Headache
+c2h2          1863      2   .3612453         0         1  C2 Item 20: Headache for How Long
+c2h3          1863      2   .1916264         0         1  C2 Item 21: Nausea or Vomiting
+c2h4          1863      2   .2716049         0         1  C2 Item 22: Swelling in Feet
+c2h5          1863      2    .187869         0         1  C2 Item 23: Last Menstrual Period
+c2h6          1863      2   .0864198         0         1  C2 Item 24: Weight Gain in Pregnancy
+c2h7          1863      2   .0670961         0         1  C2 Item 25: Baby Moving
+c2h8          1863      2    .057971         0         1  C2 Item 26: Bleeding or Discharge
+c2h9          1863      2   .0638755         0         1  C2 Item 27: Antenatal Checkup
+c2h10         1863      2   .0810521         0         1  C2 Item 28: Other Pregnancy
+c2h11         1863      2   .0542136         0         1  C2 Item 29: Immunizations
+c2h12         1863      2   .0504563         0         1  C2 Item 30: Ultrasound
+c2h13         1863      2   .0622652         0         1  C2 Item 31: History of Hypertension
+c2h14         1863      2   .0338164         0         1  C2 Item 32: History of Diabetes
+c2h15         1863      2   .0633387         0         1  C2 Item 33: Anemia
+c2h16         1863      2   .0225443         0         1  C2 Item 34: History of Heart Disease
+c2h17         1863      2   .0166398         0         1  C2 Item 35: Inherited Disease
+c2h18         1863      2   .0552872         0         1  C2 Item 36: Shortness of Breath
+c2h19         1863      2     .15781         0         1  C2 Item 37: Swelling in Ankles How Long
+c2e2          1863      2   .1154053         0         1  C2 Item 39: Respiratory Rate
+rel2          1863      2   .4600107         0         1  C2 Item 40: Blood Pressure
+c2e4          1863      2   .0660225         0         1  C2 Item 41: Auscultation
+c2e5          1863      2     .15781         0         1  C2 Item 42: Edema in Feet
+c2e6          1863      2   .1121846         0         1  C2 Item 43: Exam of Eyes and Mouth
+c2e7          1863      2   .1615674         0         1  C2 Item 44: Urine Test for Albumin
+c2e8          1863      2   .0987654         0         1  C2 Item 45: Urine Test for Glucose
+c2e9          1863      2   .0831991         0         1  C2 Item 46: Blood Glucose
+c2e10         1863      2   .3429952         0         1  C2 Item 47: Blood HB
+c2e11         1863      2   .0322061         0         1  C2 Item 48: Palpation of Fetus
+c3h1          1130      2   .2504425         0         1  C3 Item 50: Fever
+c3h2          1130      2   .3345133         0         1  C3 Item 51: Vomiting
+c3h3          1130      2    .380531         0         1  C3 Item 52: Frequency of Stool
+rel3          1130      2   .1743363         0         1  C3 Item 53: Blood or Mucous in Stool
+c3h5          1130      2   .0619469         0         1  C3 Item 54: Time Child Last Urinated
+c3e2          1130      2   .1504425         0         1  C3 Item 56: Pulse Rate
+c3e3          1130      2   .2150442         0         1  C3 Item 57: Temperature
+c3e4          1130      2   .0681416         0         1  C3 Item 58: Mucous Membranes
+c3e5          1130      2   .0548673         0         1  C3 Item 59: Tears
+c3e6          1130      2   .0610619         0         1  C3 Item 60: Skin Color and Turgor
+c3e7          1130      2   .0814159         0         1  C3 Item 61: Palpation of Abdomen
+c3e8          1130      2   .0300885         0         1  C3 Item 62: Depression of Skull Fontanel
+c3e9          1130      2   .0221239         0         1  C3 Item 63: Blood Serum Electrolytes
+c4h1          1067      2   .2296157         0         1  C4 Item 65: Fever
+c4h2          1067      2   .3336457         0         1  C4 Item 66: Vomiting
+c4h3          1067      2   .4142455         0         1  C4 Item 67: Frequency of Stool
+rel4          1067      2   .1940019         0         1  C4 Item 68: Blood or Mucous in Stool
+c4h5          1067      2   .0506092         0         1  C4 Item 69: Time Child Last Urinated
+c4e2          1067      2   .1237113         0         1  C4 Item 71: Pulse Rate
+c4e3          1067      2   .2061856         0         1  C4 Item 72: Temperature
+c4e4          1067      2    .059044         0         1  C4 Item 73: Mucous Membranes
+c4e5          1067      2   .0431115         0         1  C4 Item 74: Tears
+c4e6          1067      2    .049672         0         1  C4 Item 75: Skin Color and Turgor
+c4e7          1067      2   .0749766         0         1  C4 Item 76: Palpation of Abdomen
+c4e8          1067      2   .0262418         0         1  C4 Item 77: Depression of Skull Fontanel
+c4e9          1067      2   .0121837         0         1  C4 Item 78: Blood Serum Electrolytes
+correct1      1849      2   .6500811         0         1  Provide correct diagnose for TB
+correct2      1726      2   .4078795         0         1  Provide correct diagnose for preeclampsia
+c1med_total   1904      7   1.721113         0         6  Number of medicines prescribed for TB
+c2med_total   1904      7   1.192227         0         6  Number of medicines prescribed for preeclampsia
+c3med_total    949      7    2.12961         0         6  Number of medicines prescribed for diarrhea
+c4med_total    892      7    2.23991         0         6  Number of medicines prescribed for dysentery
+public        1904      2   .1108193         0         1  Public provider (PHC/CHC or village public)
+c1antb        1904      2   .2573529         0         1  Prescribed antibiotics for TB
+c2antb        1904      2   .0582983         0         1  Prescribed antibiotics for preeclampsia
+c3antb         949      2   .5152792         0         1  Prescribed antibiotics for diarrhea
+c4antb         892      2   .5459641         0         1  Prescribed antibiotics for dysentery
+antibiotic    1904      2   .6097689         0         1  Prescribed antibiotics in at least one case
+c1steroid     1904      2   .1055672         0         1  Prescribed steroids for TB
+c2steroid     1904      2   .0903361         0         1  Prescribed steroids for preeclampsia
+c3steroid      949      2   .0168599         0         1  Prescribed steroids for diarrhea
+c4steroid      892      2   .0358744         0         1  Prescribed steroids for dysentery
+treat1        1875      2   .5653333         0         1  Provided correct case management for TB
+treat2        1731      2   .3558637         0         1  Provided correct case management for preeclampsia
+dmses         1904    178   1.290246  .2987948  2.373863  District mean of household SES index
+treat_n       1897      5   .5316289         0         1  Correct Treatments
+diag_n        1886      5   .5531106         0         1  Correct Diagnoses
+antibi_n      1904      5   .2773109         0         1  Antibiotics
+uid           4335   4335       2168         1      4335  UID
+theta_mle     1701   1510  -.0013189  -4.39023   3.15752  Theta (MLE)
+theta_pct     1701    100   .5045855       .01         1  100 quantiles of theta_mle
+vignette      4335      2   .3923875         0         1  Completed Vignette
+-------------------------------------------------------------------------------------------------------------------------------------------------------

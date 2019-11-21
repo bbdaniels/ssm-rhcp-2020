@@ -111,13 +111,67 @@
 
 	   graph export "${outputs}/f3-sesshare.eps" , replace
 
-// Figure 4: MBBS - IP Quality correlations ----------------------------------------------------
+// Figure 4: Excess capacity -------------------------------------------------------------------
+
+	use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , clear
+  count
+  recode s1q15 (-99 = .)
+  count if s2q15 != . & s2q16 != .
+
+  // Adjust number of patients for public clinics
+  egen group = group(private mbbs) , label
+      replace group = 2 if group == .
+  bys finclinid: gen n = _N
+   bys stateid finclinid_new: gen ndocs = _N
+   replace patients = patients/ndocs if public == 1
+	gen check = patients
+    drop if (check > 120 | s2q16 == 0)
+
+  // bin minutes per patient and calculate hours per day
+  recode s2q16 (1/5 = 5)(6/10 = 10)(11/15 = 15)(16/20 = 20)(26/max=30) , gen(minpp)
+  gen hours = check*s2q16/60
+    gen pct = hours / 6
+    mean hours pct patients s2q16 [pweight = weight_psu] , over(group) // average utilization
+
+  // Graph
+  replace minpp = minpp+1 if group == 1 // Public MBBS
+  replace minpp = minpp-1 if group == 2 // Private non-MBBS
+
+  local opts lc(gray) lw(thin)
+
+  tw ///
+    (scatter check minpp if private == 1 & mbbs == 0, jitter(2) m(.) mc(maroon) msize(*.1)) ///
+    (scatter check minpp if private == 1 & mbbs == 1, jitter(2) m(T) mc(dkgreen) msize(*.4)) ///
+    (scatter check minpp if private == 0 & mbbs == 1, jitter(2) m(O) mc(navy) msize(*.4)) ///
+    /// (function 360/x , range(3 35) lc(gray) lp(solid) lw(vthin)) ///
+      (function 72, range(3 7.5) `opts') ///
+      (pci 36 7.5 72 7.5 , `opts') ///
+      (function 36, range(7.5 12.5) `opts') ///
+      (pci 36 12.5 24 12.5 , `opts') ///
+      (function 24, range(12.5 17.5) `opts') ///
+      (pci 24 17.5 18 17.5 , `opts') ///
+      (function 18, range(17.5 22.5) `opts') ///
+      (pci 18 22.5 14.4 22.5 , `opts') ///
+      (function 14.4, range(22.5 27.5) `opts') ///
+      (pci 14.4 27.5 12 27.5 , `opts') ///
+      (function 12, range(27.5 32) `opts') ///
+      (scatteri 12 32 "6 Hour Workday" , m(none) mlabc(gray)) ///
+      (scatteri 12 40  , m(none) mlabc(gray)) ///
+  , legend(r(1) on order(1 "Private Non-MBBS" 2 "Private MBBS" 3 "Public MBBS")) ///
+    xtit("Minutes per Patient {&rarr}")  ytit("Patients per Provider Day") ///
+    xlab(5 ":05" 10 ":10" 15 ":15" 20 ":20" 25 ":25" 30 ":30+" , notick)
+
+		graph export "${outputs}/f4-capacity.eps" , replace
+
+// Figure 5: MBBS - IP Quality correlations ----------------------------------------------------
 
   use "${directory}/Constructed/M2_Vignettes.dta" ///
      if provtype == 1 | provtype == 6, clear
 
+  gen count = 1
+
   // Get graphing points
-  collapse (mean) mean = theta_mle (sem) sem = theta_mle , by(mbbs state_code)
+  collapse (sum) count (mean) mean = theta_mle (sem) sem = theta_mle , by(mbbs state_code)
     gen ul = mean + 1.96*sem
     gen ll = mean - 1.96*sem
 
@@ -149,65 +203,54 @@
     , x(theta_mle) range(-3(1)2) lab(-4) p
 	tw ///
     (rcap ll ul n , lw(thin) lc(black) hor) ///
-    (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(small)) ///
-    (scatter n mean if mbbs == 1, mc(navy) m(.) msize(small)) ///
+    (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(med)) ///
+    (scatter n mean if mbbs == 1, mc(navy) m(.) msize(med)) ///
     (scatter pos2 pos if mbbs == 1, mlabpos(3) m(none) ml(state_code) mlabc(black)) ///
   , yscale(off) xlab(-4.5 " " `r(theLabels)', labsize(small)) ysize(6) ///
     legend(on size(small) order (2 "Non-MBBS" 3 "MBBS") ring(0) pos(5) c(1))
 
-		graph export "${outputs}/f4-mbbs-ip-quality.eps" , replace
+		graph export "${outputs}/f5-mbbs-ip-quality.eps" , replace
 
-// Figure 5: Excess capacity -------------------------------------------------------------------
+// Figure 6: Quality cutoffs -------------------------------------------------------------------
 
-	use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , clear
-  count
-  recode s1q15 (-99 = .)
-  count if s2q15 != . & s2q16 != .
+use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
-  // Adjust number of patients for public clinics
-  egen group = group(private mbbs) , label
-      replace group = 2 if group == .
-  bys finclinid: gen n = _N
-   bys stateid finclinid_new: gen ndocs = _N
-   replace patients = patients/ndocs if public == 1
-	gen check = patients
-    drop if (check > 120 | s2q16 == 0)
+  egen total = rsum(type_?)
+  gen any = (total>0)
 
-  // bin minutes per patient and calculate hours per day
-  recode s2q16 (1/5 = 5)(6/10 = 10)(11/15 = 15)(16/20 = 20)(26/max=30) , gen(minpp)
-  gen hours = check*s2q16/60
-    gen pct = hours / 6
-    mean pct patients s2q16 [pweight = weight_psu] , over(group) // average utilization
+  collapse (max) any regsim_? (mean) weight_psu , by(state_code villid) fast
+  collapse (mean) any (mean) regsim_? , by(state_code)
 
-  // Graph
-  replace minpp = minpp+1 if group == 1 // Public MBBS
-  replace minpp = minpp-1 if group == 2 // Private non-MBBS
+  forvalues i = 1/3 {
+    replace regsim_`i' = regsim_`i'*any
+  }
 
-  local opts lc(gray) lw(thin)
+  egen check = rank(regsim_3) , unique
+    sort check
+  decode state_code , gen(state)
 
-  tw ///
-    (scatter check minpp if private == 1 & mbbs == 0, jitter(2) m(.) mc(maroon) msize(*.1)) ///
-    (scatter check minpp if private == 1 & mbbs == 1, jitter(2) m(T) mc(dkgreen) msize(*.4)) ///
-    (scatter check minpp if private == 0 & mbbs == 1, jitter(2) m(O) mc(navy) msize(*.4)) ///
-    /// (function 360/x , range(3 35) lc(gray) lp(solid) lw(vthin)) ///
-      (function 72, range(3 7.5) `opts') ///
-      (pci 36 7.5 72 7.5 , `opts') ///
-      (function 36, range(7.5 12.5) `opts') ///
-      (pci 36 12.5 24 12.5 , `opts') ///
-      (function 24, range(12.5 17.5) `opts') ///
-      (pci 24 17.5 18 17.5 , `opts') ///
-      (function 18, range(17.5 22.5) `opts') ///
-      (pci 18 22.5 14.4 22.5 , `opts') ///
-      (function 14.4, range(22.5 27.5) `opts') ///
-      (pci 14.4 27.5 12 27.5 , `opts') ///
-      (function 12, range(27.5 32) `opts') ///
-      (scatteri 12 32 "6 Hour Workday" , m(none) mlabc(gray)) ///
-      (scatteri 12 40  , m(none) mlabc(gray)) ///
-  , legend(r(1) on order(1 "Private Non-MBBS" 2 "Private MBBS" 3 "Public MBBS")) ///
-    xtit("Minutes per Patient {&rarr}")  ytit("Patients per Provider Day") ///
-    xlab(5 ":05" 10 ":10" 15 ":15" 20 ":20" 25 ":25" 30 ":30+" , notick)
+  qui count
+  forvalues i = 1/`r(N)' {
+    local theState = state[`i']
+    local theRank = check[`i']
+    local theLabels = `"`theLabels' `theRank' "`theState'" "'
+  }
 
-		graph export "${outputs}/f5-capacity.eps" , replace
+  graph dot any regsim_1 regsim_2 regsim_3 ///
+  , over(state, sort(4) descending axis(noline) label(labsize(small))) ///
+      marker(1, m(T) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
+      marker(2, m(O) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
+      marker(3, m(S) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
+      marker(4, m(D) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
+    linetype(line) line(lw(thin) lc(gs14)) ///
+    legend(on span c(1) size(small) order( ///
+        1 "Villages with any providers" ///
+        2 "Villages with MBBS providers" ///
+        3 "Villages with providers better than state average MBBS" ///
+        4 "Villages with providers better than national average MBBS")) ///
+    ylab(${pct}) ytit("Proportion of villages {&rarr}") yscale(r(0) noline) noextendline ysize(6)
+
+    graph export "${outputs}/f6-quality-regulation.eps" ,  replace
 
 // ---------------------------------------------------------------------------------------------
 // Simulations ---------------------------------------------------------------------------------
@@ -248,11 +291,11 @@
   , xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
     yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
 
-     graph export "${outputs}/f6-status-quo.eps" ,  replace
+     graph export "${outputs}/f7-status-quo.eps" ,  replace
 
-  save "${directory}/temp/sim-status-quo.dta" , replace
+  save "${directory}/constructed/sim-status-quo.dta" , replace
 
-// Figure 7: AYUSH into public sector ----------------------------------------------------------
+// Figure 8: AYUSH into public sector ----------------------------------------------------------
 
   use "${directory}/Constructed/M1_providers-simulations.dta", clear
 
@@ -275,7 +318,7 @@
 
   // Calculate and tabulate
   pq Public AYUSH
-    append using "${directory}/temp/sim-status-quo.dta"
+    append using "${directory}/constructed/sim-status-quo.dta"
     encode case, gen(c)
     drop case
     reshape wide theta_mle cpp , i(state_code) j(c)
@@ -291,9 +334,9 @@
     xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
      yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
 
-  graph export "${outputs}/f7-public-ayush.eps" ,  replace
+  graph export "${outputs}/f8-public-ayush.eps" ,  replace
 
-// Figure 8: Build out public sector -----------------------------------------------------------
+// Figure 9: Build out public sector -----------------------------------------------------------
 
   use "${directory}/Constructed/M1_providers-simulations.dta", clear
 
@@ -317,7 +360,7 @@
 
   // Calculate and tabulate
   pq PHCs Everywhere
-    append using "${directory}/temp/sim-status-quo.dta"
+    append using "${directory}/constructed/sim-status-quo.dta"
     encode case, gen(c)
     drop case
     reshape wide theta_mle cpp , i(state_code) j(c)
@@ -336,48 +379,7 @@
     xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
      yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
 
-     graph export "${outputs}/f8-phcs-everywhere.eps" ,  replace
-
-// Figure 9: Quality cutoffs -------------------------------------------------------------------
-
-use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
-
-  egen total = rsum(type_?)
-  gen any = (total>0)
-
-  collapse (max) any regsim_? (mean) weight_psu , by(state_code villid) fast
-  collapse (mean) any (mean) regsim_? , by(state_code)
-
-  forvalues i = 1/3 {
-    replace regsim_`i' = regsim_`i'*any
-  }
-
-  egen check = rank(regsim_3) , unique
-    sort check
-  decode state_code , gen(state)
-
-  qui count
-  forvalues i = 1/`r(N)' {
-    local theState = state[`i']
-    local theRank = check[`i']
-    local theLabels = `"`theLabels' `theRank' "`theState'" "'
-  }
-
-  graph dot any regsim_1 regsim_2 regsim_3 ///
-  , over(state, sort(4) descending axis(noline) label(labsize(small))) ///
-      marker(1, m(T) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
-      marker(2, m(O) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
-      marker(3, m(S) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
-      marker(4, m(D) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
-    linetype(line) line(lw(thin) lc(gs14)) ///
-    legend(on span c(1) size(small) order( ///
-        1 "Villages with any providers" ///
-        2 "Villages with MBBS providers" ///
-        3 "Villages with providers better than state average MBBS" ///
-        4 "Villages with providers better than national average MBBS")) ///
-    ylab(${pct}) ytit("Proportion of villages {&rarr}") yscale(r(0) noline) noextendline ysize(6)
-
-    graph export "${outputs}/f9-quality-regulation.eps" ,  replace
+     graph export "${outputs}/f9-phcs-everywhere.eps" ,  replace
 
 // ---------------------------------------------------------------------------------------------
 // Tables --------------------------------------------------------------------------------------
@@ -415,15 +417,14 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
 
   labelcollapse (mean) mbbs_pub mbbs_pri mbbs nonmbbs none ///
-    [pweight = weight_psu] , by(state)
+    [pweight = weight_psu] , by(state_code)
 
   export excel using "${outputs}/t1-availability.xlsx" , first(varl) replace
 
-
-
 // Table 2: Caseload regressions ---------------------------------------------------------------
 use "${directory}/Constructed/M1_providers.dta" ///
-if private == 1 | mbbs == 1 , clear
+  if private == 1 | mbbs == 1 , clear
+
   recode s1q15 (-99 = .)
 
   replace public = 1-private
@@ -434,8 +435,8 @@ if private == 1 | mbbs == 1 , clear
   // Adjust number of patients for public clinics
   egen group = group(private mbbs) , label
       replace group = 2 if group == .
-  bys finclinid: gen n = _N
-    bys stateid finclinid_new: gen ndocs = _N
+  bys finclinid : gen n = _N
+    bys stateid finclinid_new : gen ndocs = _N
     replace patients = patients/ndocs if public == 1
 
   // Covariates
@@ -514,39 +515,47 @@ use "${directory}/Constructed/M1_providers.dta" , clear
     reg theta_mle `covars' [pweight = weight_psu]
       getstats reg1
 
-    // Column 1b: Public
+    // Column 2: Public
     reg theta_mle `covars' if private == 0 [pweight = weight_psu]
       getstats reg1b
 
-    // Column 2: Private Only
-    reg theta_mle `covars' pcomp if private == 1 [pweight = weight_psu]
+    // Column 3: Private Only
+    reg theta_mle `covars'  if private == 1 [pweight = weight_psu]
       getstats reg2
 
-    // Column 3: Private IP Only
+    // Column 4: Private Only
+    reg theta_mle `covars' pcomp if private == 1 [pweight = weight_psu]
+      getstats reg2b
+
+    // Column 5: Private IP Only
     reg theta_mle `covars' pcomp if private == 1 & mbbs == 0 [pweight = weight_psu]
       getstats reg3
 
-    // Column 4: Base State FE
+    // Column 6: Base State FE
     areg theta_mle `covars' [pweight = weight_psu] , a(state_code)
       getstats reg4
 
-    // Column 1b: Public FE
+    // Column 7: Public FE
     areg theta_mle `covars' if private == 0 [pweight = weight_psu] , a(state_code)
       getstats reg4b
 
-    // Column 5: Private Only State FE
-    areg theta_mle `covars' pcomp if private == 1 [pweight = weight_psu] , a(state_code)
+    // Column 8: Private Only State FE
+    areg theta_mle `covars' if private == 1 [pweight = weight_psu] , a(state_code)
       getstats reg5
 
-    // Column 6: Private IP Only State FE
+    // Column 9: Private Only State FE
+    areg theta_mle `covars' pcomp if private == 1 [pweight = weight_psu] , a(state_code)
+      getstats reg5b
+
+    // Column 10: Private IP Only State FE
     areg theta_mle `covars' pcomp if private == 1 & mbbs == 0 [pweight = weight_psu] , a(state_code)
       getstats reg6
 
   // Output
-  outwrite reg1 reg1b reg2 reg3 reg4 reg4b reg5 reg6 ///
+  outwrite reg1 reg1b reg2 reg2b reg3 reg4 reg4b reg5 reg5b reg6 ///
     using "${outputs}/t3-vignettes.xlsx" ///
     , replace stats(N mean sd r2) ///
-    col("Full Sample" "Public Providers" "Private Providers" "Private non-MBBS" ///
-      "Full Sample" "Public Providers" "Private Providers" "Private non-MBBS")
+    col("Full Sample" "Public Providers" "Private Providers" "Private Providers" "Private non-MBBS" ///
+      "Full Sample" "Public Providers" "Private Providers" "Private Providers" "Private non-MBBS")
 
 // Have a lovely day!

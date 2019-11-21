@@ -11,9 +11,9 @@
   collapse (sum) type_? (mean) weight_psu , by(state_code villid) fast // Add public + private
   egen total = rsum(type_?)
   mean total [pweight = weight_psu]
-  mean total [pweight = weight_psu] , over(state)
+  mean total [pweight = weight_psu] , over(state_code)
 
-  collapse (sum) type_? , by(state)
+  collapse (sum) type_? , by(state_code)
 
 // All-providers stats
 

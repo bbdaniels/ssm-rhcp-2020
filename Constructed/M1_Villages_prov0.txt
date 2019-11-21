@@ -1,0 +1,25 @@
+
+Variable     Obs Unique      Mean       Min       Max  Label
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+villid      3038     88  41.12047         1        88  village id
+private     3038      2        .5         0         1  Private
+state_code  3038     19    9.9921         1        19  State
+type_1      3038      3   .001975         0         2  MBBS
+type_2      3038      6  .0516787         0         5  AYUSH
+type_3      3038     11  .4272548         0        14  Informal
+type_4      3038      6  .0319289         0         6  Unknown
+smses       3038     19  1.320088  .5943771  2.106291  State SES
+weight_psu  3038     76  475789.7  68528.98   2016045  PSU Weight
+pop_vill    3016   1259  2670.361       251     19903  Village Population
+patients    2340    373  35.07334         0       550  Total Patients
+type_10     3038      3  .0016458         0         2  Public MBBS
+type_11     3038      2  .0003292         0         1  Private MBBS
+type_20     3038      6  .0431205         0         5  Public AYUSH
+type_21     3038      3  .0085583         0         2  Private AYUSH
+type_30     3038     11  .3429888         0        14  Public Informal
+type_31     3038      8   .084266         0         7  Private Informal
+type_40     3038      5   .005925         0         6  Public Unknown
+type_41     3038      5  .0260039         0         4  Private Unknown
+u5mr        3038     17  44.69717         7        78  Under-5 Mortality Rate
+uvillid     3038   1519       760         1      1519  Dataset Unique Village ID
+-------------------------------------------------------------------------------------------------------------------------------------------------------
