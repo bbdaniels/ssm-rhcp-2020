@@ -13,8 +13,6 @@
 		qui run "${directory}/adofiles/`adoFile'"
 		}
 
-  qui run "${directory}/hashdata/hashdata.ado"
-
 * Globals
 
   global outputs "${directory}/outputs/manuscript/"

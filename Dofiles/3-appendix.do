@@ -90,7 +90,7 @@ use "${directory}/Constructed/M2_Vignettes.dta" ///
       using "${outputsa}/t-theta.xlsx" , replace first(varl)
 
 
-// Table 3: Cost & quality as observed----------------------------------------------------------
+// Table 4: Cost & quality as observed----------------------------------------------------------
 
 // Calculate public sector salaries and patient shares
 use "${directory}/Constructed/M1_providers.dta" if mbbs != . , clear
@@ -152,7 +152,7 @@ use "${directory}/Constructed/M1_providers-simulations.dta", clear
     state_code patients medincome pubshare pub_cost fees_total cpp theta_mle ///
     using "${outputsa}/t-costs.xlsx" , replace first(varl)
 
-// Table 5
+// Table 5. Relationship between MBBS degree and provider competence by state ------------------
   // Counts
   use "${directory}/Constructed/M2_Vignettes.dta" ///
     if provtype == 1 | provtype == 6, clear
@@ -179,6 +179,75 @@ use "${directory}/Constructed/M1_providers-simulations.dta", clear
   export excel ///
     state_code mbbs mbbs_pct nonmbbs nonmbbs_pct mbbs_lvl nonmbbs_lvl ///
     using "${outputsa}/t-shares.xlsx" , first(varl) replace
+
+// Table 6. vignette sampling and completion
+use "${directory}/Constructed/M1_providers.dta" , clear
+
+  // Cleaning
+  lab var male "Male"
+  tabgen type
+  gen priv = practype == 2
+    label var priv "Private"
+  lab var patients "Caseload x10"
+    replace patients = patients/10
+  lab var fees_total "Total Fee x10"
+    replace fees_total = fees_total/10
+  lab var s2q16 "Time per Patient x10"
+    replace s2q16 = s2q16/10
+  lab var public "Public
+  lab var age "Age"
+
+  lab def vignette 0 "No Followup" 1 "Vignette"
+
+  // Varlist
+  local covars male s3q11_* otherjob_none age ///
+    patients fees_total s2q16
+
+  // Balance tables
+    iebaltab  ///
+       `covars' ///
+      type_1 type_2 type_3 priv ///
+    if survey == 1 ///
+    , grpvar(vignette) save("${outputsa}/t-vignettes.xlsx") co(1) replace rowv
+
+    iebaltab  ///
+      `covars' ///
+      priv ///
+    if survey == 1 & type_1 == 1 ///
+    , grpvar(vignette) save("${outputsa}/t-vignettes-mbbs.xlsx") co(1) replace rowv
+
+    iebaltab  ///
+      `covars' ///
+      priv ///
+    if survey == 1 & type_1 == 0 ///
+    , grpvar(vignette) save("${outputsa}/t-vignettes-nonmbbs.xlsx") co(1) replace rowv
+
+// Table 7. IPW Status quo cost and quality ----------------------------------------------------
+use "${directory}/Constructed/M1_providers-simulations.dta", clear
+  pq Status Quo
+  tempfile main
+   save `main' , replace
+
+  use "${directory}/Constructed/M1_providers-simulations-weight.dta", clear
+  pq Status Quo
+  drop case
+  rename (cpp theta_mle)(cpp_w theta_mle_w)
+  merge 1:1 state_code using `main'
+
+  drop case _merge
+  lab var cpp "Cost per Patient"
+  lab var cpp_w "Cost per Patient"
+  lab var theta_mle "Average Quality"
+  lab var theta_mle_w "Average Quality"
+
+  decode state_code, gen(state)
+   lab var state "State"
+   drop state_code
+  tostring * , replace force format(%9.2f)
+
+  export excel state cpp cpp_w theta_mle theta_mle_w ///
+   using "${outputsa}/t-estimated-ipw.xlsx" ///
+  , first(varl) replace
 
 // Figure 1: Paramedical provider counts -------------------------------------------------------
 use "${directory}/Constructed/M1_Villages_prov0.dta" , clear
@@ -268,7 +337,6 @@ use "${directory}/Constructed/M1_households.dta" ///
     graph export "${outputsa}/f-invillage.eps" , replace
 
 // Figure 4/5: Self reported patient loads vs observed patients --------------------------------
-
 use "${directory}/Constructed/birbhum-demand.dta" , clear
 
   tw ///
@@ -353,7 +421,7 @@ use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , cl
 
   graph export  "${outputsa}/f-ses-competence.eps" , replace
 
-// Figure 8: MBBS-SES correlation --------------------------------------------------------------
+// Figure 8: MBBS-competence correlation -------------------------------------------------------
 use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , clear
 collapse (mean) mbbs theta_mle , by(state_code)
 
@@ -385,7 +453,7 @@ collapse (mean) mbbs theta_mle , by(state_code)
 
       graph export "${outputsa}/f-mbbs-statewise.eps" , replace
 
-// Table: vignette sampling and completion
+// Figure 10: Selection characteristics and vignettes results model ----------------------------
 use "${directory}/Constructed/M1_providers.dta" , clear
 
   // Cleaning
@@ -408,76 +476,26 @@ use "${directory}/Constructed/M1_providers.dta" , clear
   local covars male s3q11_* otherjob_none age ///
     patients fees_total s2q16
 
-  // Balance tables
-    iebaltab  ///
-       `covars' ///
-      type_1 type_2 type_3 priv ///
-    if survey == 1 ///
-    , grpvar(vignette) save("${outputsa}/t-vignettes.xlsx") co(1) replace rowv
-
-    iebaltab  ///
-      `covars' ///
-      priv ///
-    if survey == 1 & type_1 == 1 ///
-    , grpvar(vignette) save("${outputsa}/t-vignettes-mbbs.xlsx") co(1) replace rowv
-
-    iebaltab  ///
-      `covars' ///
-      priv ///
-    if survey == 1 & type_1 == 0 ///
-    , grpvar(vignette) save("${outputsa}/t-vignettes-nonmbbs.xlsx") co(1) replace rowv
-
   // LASSO
-    qui elasticnet linear vignette ///
-      priv mbbs male s3q11_* otherjob_none age ///
-      patients fees_total s2q16 ///
-      i.s3q4 i.s3q5 i.s2q20a i.s3q2
+  qui elasticnet linear vignette ///
+    priv mbbs male s3q11_* otherjob_none age ///
+    patients fees_total s2q16 ///
+    i.s3q4 i.s3q5 i.s2q20a i.s3q2
 
-      // s3q4 s3q5 s2q20a s3q2
+    // s3q4 s3q5 s2q20a s3q2
 
-      lassoselect id = `e(ID_sel)'
-        local covars = "`e(othervars_sel)'"
-      reg vignette `covars'
-        est sto Completion
-        predict completion
-      reg theta_mle `covars'
-        est sto Performance
-        predict performance
+    lassoselect id = `e(ID_sel)'
+      local covars = "`e(othervars_sel)'"
+    reg vignette `covars'
+      est sto Completion
+      predict completion
+    reg theta_mle `covars'
+      est sto Performance
+      predict performance
 
-      coefplot Completion Performance, xline(0) ///
-        legend(on ring(0) pos(1) c(1)) ciopts(lc(gray)) msize(medium)
+    coefplot Completion Performance, xline(0) ///
+      legend(on ring(0) pos(1) c(1)) ciopts(lc(gray)) msize(medium)
 
-        graph export "${outputsa}/f-ipw-lasso.eps" , replace
-
-
-     // IPW Status quo cost and quality -------------------------------------------------------
-      use "${directory}/Constructed/M1_providers-simulations.dta", clear
-      pq Status Quo
-      tempfile main
-        save `main' , replace
-
-      use "${directory}/Constructed/M1_providers-simulations-weight.dta", clear
-      pq Status Quo
-      drop case
-      rename (cpp theta_mle)(cpp_w theta_mle_w)
-      merge 1:1 state_code using `main'
-
-      drop case _merge
-      lab var cpp "Cost per Patient"
-      lab var cpp_w "Cost per Patient"
-      lab var theta_mle "Average Quality"
-      lab var theta_mle_w "Average Quality"
-
-      decode state_code, gen(state)
-        lab var state "State"
-        drop state_code
-      tostring * , replace force format(%9.2f)
-
-      export excel state cpp cpp_w theta_mle theta_mle_w ///
-        using "${outputsa}/t-estimated-ipw.xlsx" ///
-      , first(varl) replace
-
-
-
+      graph export "${outputsa}/f-ipw-lasso.eps" , replace
 
 // Have a lovely day! --------------------------------------------------------------------------

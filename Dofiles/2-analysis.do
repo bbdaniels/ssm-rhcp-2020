@@ -211,6 +211,47 @@
 
 		graph export "${outputs}/f5-mbbs-ip-quality.eps" , replace
 
+// Figure 6: Quality cutoffs -------------------------------------------------------------------
+
+use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
+
+  egen total = rsum(type_?)
+  gen any = (total>0)
+
+  collapse (max) any regsim_? (mean) weight_psu , by(state_code villid) fast
+  collapse (mean) any (mean) regsim_? , by(state_code)
+
+  forvalues i = 1/3 {
+    replace regsim_`i' = regsim_`i'*any
+  }
+
+  egen check = rank(regsim_3) , unique
+    sort check
+  decode state_code , gen(state)
+
+  qui count
+  forvalues i = 1/`r(N)' {
+    local theState = state[`i']
+    local theRank = check[`i']
+    local theLabels = `"`theLabels' `theRank' "`theState'" "'
+  }
+
+  graph dot any regsim_1 regsim_2 regsim_3 ///
+  , over(state, sort(4) descending axis(noline) label(labsize(small))) ///
+      marker(1, m(T) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
+      marker(2, m(O) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
+      marker(3, m(S) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
+      marker(4, m(D) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
+    linetype(line) line(lw(thin) lc(gs14)) ///
+    legend(on span c(1) size(small) order( ///
+        1 "Villages with any providers" ///
+        2 "Villages with MBBS providers" ///
+        3 "Villages with providers better than state average MBBS" ///
+        4 "Villages with providers better than national average MBBS")) ///
+    ylab(${pct}) ytit("Proportion of villages {&rarr}") yscale(r(0) noline) noextendline ysize(6)
+
+    graph export "${outputs}/f6-quality-regulation.eps" ,  replace
+
 // ---------------------------------------------------------------------------------------------
 // Simulations ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------
@@ -250,50 +291,9 @@
   , xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
     yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
 
-     graph export "${outputs}/f6-status-quo.eps" ,  replace
+     graph export "${outputs}/f7-status-quo.eps" ,  replace
 
   save "${directory}/constructed/sim-status-quo.dta" , replace
-
-// Figure 7: Quality cutoffs -------------------------------------------------------------------
-
-use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
-
-  egen total = rsum(type_?)
-  gen any = (total>0)
-
-  collapse (max) any regsim_? (mean) weight_psu , by(state_code villid) fast
-  collapse (mean) any (mean) regsim_? , by(state_code)
-
-  forvalues i = 1/3 {
-    replace regsim_`i' = regsim_`i'*any
-  }
-
-  egen check = rank(regsim_3) , unique
-    sort check
-  decode state_code , gen(state)
-
-  qui count
-  forvalues i = 1/`r(N)' {
-    local theState = state[`i']
-    local theRank = check[`i']
-    local theLabels = `"`theLabels' `theRank' "`theState'" "'
-  }
-
-  graph dot any regsim_1 regsim_2 regsim_3 ///
-  , over(state, sort(4) descending axis(noline) label(labsize(small))) ///
-      marker(1, m(T) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
-      marker(2, m(O) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
-      marker(3, m(S) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
-      marker(4, m(D) msize(*3) mlc(white) mlw(vthin) mla(center)) ///
-    linetype(line) line(lw(thin) lc(gs14)) ///
-    legend(on span c(1) size(small) order( ///
-        1 "Villages with any providers" ///
-        2 "Villages with MBBS providers" ///
-        3 "Villages with providers better than state average MBBS" ///
-        4 "Villages with providers better than national average MBBS")) ///
-    ylab(${pct}) ytit("Proportion of villages {&rarr}") yscale(r(0) noline) noextendline ysize(6)
-
-    graph export "${outputs}/f7-quality-regulation.eps" ,  replace
 
 // Figure 8: AYUSH into public sector ----------------------------------------------------------
 
@@ -420,8 +420,6 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
     [pweight = weight_psu] , by(state_code)
 
   export excel using "${outputs}/t1-availability.xlsx" , first(varl) replace
-
-
 
 // Table 2: Caseload regressions ---------------------------------------------------------------
 use "${directory}/Constructed/M1_providers.dta" ///

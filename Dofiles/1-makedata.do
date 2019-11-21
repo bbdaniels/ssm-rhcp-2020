@@ -9,7 +9,6 @@ cap prog drop dataset
           "${directory}/dofiles/2-analysis.do" ///
           "${directory}/dofiles/3-appendix.do" ///
           "${directory}/dofiles/4-textstats.do" ///
-          "${directory}/dofiles/5-revision.do" ///
         )
 end
 
