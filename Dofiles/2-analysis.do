@@ -171,12 +171,12 @@
   gen count = 1
 
   // Get graphing points
-  collapse (sum) count (mean) mean = theta_mle (sem) sem = theta_mle , by(mbbs state_code)
+  collapse (sum) count (mean) mean = theta_mle (sem) sem = theta_mle , by(mbbs statename)
     gen ul = mean + 1.96*sem
     gen ll = mean - 1.96*sem
 
   // Set up labelling and ordering
-  bys state_code : egen check = max(mean)
+  bys statename : egen check = max(mean)
     sort check mbbs
     gen n = _n
 
@@ -205,7 +205,7 @@
     (rcap ll ul n , lw(thin) lc(black) hor) ///
     (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(med)) ///
     (scatter n mean if mbbs == 1, mc(navy) m(.) msize(med)) ///
-    (scatter pos2 pos if mbbs == 1, mlabpos(3) m(none) ml(state_code) mlabc(black)) ///
+    (scatter pos2 pos if mbbs == 1, mlabpos(3) m(none) ml(statename) mlabc(black)) ///
   , yscale(off) xlab(-4.5 " " `r(theLabels)', labsize(small)) ysize(6) ///
     legend(on size(small) order (2 "Non-MBBS" 3 "MBBS") ring(0) pos(5) c(1))
 
