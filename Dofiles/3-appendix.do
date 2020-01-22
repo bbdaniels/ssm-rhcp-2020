@@ -64,13 +64,13 @@ use "${directory}/Constructed/M2_Vignettes.dta" ///
         4 "4th Quintile" 5 "Highest Quintile"
       lab val quintile quintile
 
-    egen diarrhea_freq = rmin(c3h3 c4h3)
-    egen diarrhea_treat = rmin(treat3 treat4)
-    egen diarrhea_correct = rmin(correct3 correct4)
+    egen diarrhea_freq = rmin( c3h3 c4h3 )
+    egen diarrhea_treat = rmin( treat3 treat4 )
+    egen diarrhea_correct = rmin( correct3 correct4 )
 
 
     labelcollapse ///
-      theta_mle c1e9 correct1 treat1 c2h4 c2e5  correct2 treat2 diarrhea_freq diarrhea_correct diarrhea_treat ///
+      theta_mle c1e9 correct1 treat1 c2h4 c2e5 correct2 treat2 diarrhea_freq diarrhea_correct diarrhea_treat ///
     , by(quintile)
 
     label var theta_mle "Average Knowledge Score"
@@ -84,7 +84,6 @@ use "${directory}/Constructed/M2_Vignettes.dta" ///
     label var c1e9 "TB: Order Sputum AFB Test"
     label var c2h4 "Pre-eclampsia: Ask Swelling in Feet"
     label var c2e5 "Pre-eclampsia: Check Edema in Feet"
-    label var antibiotic "Used antibiotics in any case"
 
     export excel ///
       using "${outputsa}/t-theta.xlsx" , replace first(varl)
@@ -312,10 +311,10 @@ use "${directory}/Constructed/M2_Vignettes.dta" ///
 
 // Figure 3: Clinic visits within own village (HH Survey) --------------------------------------
 use "${directory}/Constructed/M1_households.dta" ///
-  if (s4q3==1) & (s4q4==1) /// Only primary medical care
+  if ( s4q3 ==1) & ( s4q4 ==1) /// Only primary medical care
   , clear
 
-  gen priv = (s4q5>=5 & s4q5<=7 )
+  gen priv = ( s4q5 >=5 & s4q5 <=7 )
 
   gen invil = (s4q6 == 1 | s4q6 == 2) if !missing(s4q6)
   replace statename = proper(statename)
@@ -393,6 +392,8 @@ use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , cl
 
   collapse (mean) theta_mle state_code, by(dmses) fast
     merge m:1 state_code using `state' , keep(3)
+
+  isid theta_mle , sort
 
   tw (lpolyci theta_mle dmses)(scatter theta_mle dmses if theta_mle < 2) ///
   ,  ///
@@ -477,14 +478,16 @@ use "${directory}/Constructed/M1_providers.dta" , clear
     patients fees_total s2q16
 
   // LASSO
+  isid uid , sort
+  version 13
   qui elasticnet linear vignette ///
     priv mbbs male s3q11_* otherjob_none age ///
     patients fees_total s2q16 ///
-    i.s3q4 i.s3q5 i.s2q20a i.s3q2
+    i.s3q4 i.s3q5 i.s2q20a i.s3q2 ///
+  , rseed(489582) // random.org Timestamp: 2020-01-22 20:33:08 UTC
 
-    // s3q4 s3q5 s2q20a s3q2
 
-    lassoselect id = `e(ID_sel)'
+    lassoselect id = `e(ID_cv)'
       local covars = "`e(othervars_sel)'"
     reg vignette `covars'
       est sto Completion

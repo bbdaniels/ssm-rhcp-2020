@@ -6,6 +6,9 @@ statename     113076     19         .         .         .  State Name
 villid        113076     90  41.13098         1       108  Village ID
 s3q4          112998    101  28.57736         0       100  Age
 s3q5          112492      7  2.321507       -77         6  Education
+s4q3           17143     10  1.698069       -77         9  Type of medical attention
+s4q4           17147      3   1.07634         1         3  What did they do
+s4q5           16080      9  5.352425       -77         8  Type of Provider
 s4q6           16075      6  2.465879         0         5  Location of Clinic
 htag          113076      2  .1994588         0         1  Household Tag
 male          112664      2  .5294682         0         1  Male
