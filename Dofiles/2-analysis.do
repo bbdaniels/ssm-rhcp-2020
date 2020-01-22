@@ -139,10 +139,16 @@
 
   local opts lc(gray) lw(thin)
 
+  isid uid , sort
+  version 13
+
   tw ///
-    (scatter check minpp if private == 1 & mbbs == 0, jitter(2) m(.) mc(maroon) msize(*.1)) ///
-    (scatter check minpp if private == 1 & mbbs == 1, jitter(2) m(T) mc(dkgreen) msize(*.4)) ///
-    (scatter check minpp if private == 0 & mbbs == 1, jitter(2) m(O) mc(navy) msize(*.4)) ///
+    (scatter check minpp if private == 1 & mbbs == 0, ///
+        jitter(2) jitterseed(382375) m(.) mc(maroon) msize(*.1)) ///
+    (scatter check minpp if private == 1 & mbbs == 1, ///
+        jitter(2) jitterseed(382375) m(T) mc(dkgreen) msize(*.4)) ///
+    (scatter check minpp if private == 0 & mbbs == 1, ///
+        jitter(2) jitterseed(382375) m(O) mc(navy) msize(*.4)) ///
     /// (function 360/x , range(3 35) lc(gray) lp(solid) lw(vthin)) ///
       (function 72, range(3 7.5) `opts') ///
       (pci 36 7.5 72 7.5 , `opts') ///
