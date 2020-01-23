@@ -5,12 +5,9 @@
 // ---------------------------------------------------------------------------------------------
 
 // Figure 1: Village-level provider counts -----------------------------------------------------
+use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
-  use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
-
-  local opts lc(black) lp(solid) lw(vthin) la(center) fc("0 109 219")
-  local opts2 lc(black) lp(solid) lw(vthin) la(center) fc("146 0 0")
-
+  // Create all-India category
   expand 2 , gen(false)
     replace state_code = 0 if false == 1
     lab def state_code 0 "All India" , modify
@@ -23,6 +20,10 @@
     qui su u5mr if state_code == `state'
     if `state' != 0 lab def state_code `state' "`theLabel' [`r(mean)']" , modify
   }
+
+  // Graph
+  local opts  lc(black) lp(solid) lw(vthin) la(center) fc("0 109 219")
+  local opts2 lc(black) lp(solid) lw(vthin) la(center) fc("146 0 0")
 
   graph bar (mean) type_?0 type_?1  [pweight = weight_psu]  ///
   , over(private, gap(*.5) label(labsize(tiny))) ///
@@ -42,8 +43,9 @@
     graph export "${outputs}/f1-counts.eps" , replace
 
 // Figure 2: Provider demographics -------------------------------------------------------------
+use "${directory}/Constructed/M1_providers.dta" ///
+  if private == 1 | mbbs == 1 , clear
 
-	use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , clear
 	replace mbbs = 2 if private == 0 & mbbs == 1
 	replace mbbs = 0 if private == 1 & mbbs != 1
 
@@ -61,8 +63,7 @@
 		graph export "${outputs}/f2-demographics.eps" , replace
 
 // Figure 3: SES - IP relationship -------------------------------------------------------------
-
-	use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
+use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
 	keep uvillid private state_code type_1 type_2 type_3 type_4 smses weight_psu u5mr
 	reshape wide type_? , i(uvillid)  j(private) // Reduce to village level
@@ -110,11 +111,12 @@
 		ylab($pct) ytit("Share of Private Non-MBBS Providers" , placement(left) justification(left)) ///
 		xlab(-2 "-2 SD" -1 "-1 SD" 0 `""Average" "{&larr} State SES {&rarr}""' 1 "+1 SD" 2 "+2 SD") xtit("")
 
-	   graph export "${outputs}/f3-sesshare.eps" , replace
+	  graph export "${outputs}/f3-sesshare.eps" , replace
 
 // Figure 4: Excess capacity -------------------------------------------------------------------
+use "${directory}/Constructed/M1_providers.dta" ///
+  if private == 1 | mbbs == 1 , clear
 
-	use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , clear
   count
   recode s1q15 (-99 = .)
   count if s2q15 != . & s2q16 != .
@@ -146,11 +148,11 @@
   gen blank = .
 
   tw ///
-  /// Invisible cheaters for legend
+    /// Invisible cheaters for legend
     (scatter blank blank in 1 , m(.) mc(black) msize(*2)) ///
     (scatter blank blank in 1 , m(T) mc("0 109 219") msize(*4)) ///
     (scatter blank blank in 1 , m(S) mc("146 0 0") msize(*4)) ///
-  /// Actual graph points
+    /// Actual graph points
     (scatter check minpp if private == 1 & mbbs == 0, ///
         jitter(2) jitterseed(382375) m(.) mc("0 0 0") msize(*.1)) ///
     (scatter check minpp if private == 1 & mbbs == 1, ///
@@ -158,34 +160,32 @@
     (scatter check minpp if private == 0 & mbbs == 1, ///
         jitter(2) jitterseed(382375) m(S) mc("146 0 0") msize(*.4)) ///
     /// Reference line
-      (function 72, range(3 7.5) `opts') ///
-      (pci 36 7.5 72 7.5 , `opts') ///
-      (function 36, range(7.5 12.5) `opts') ///
-      (pci 36 12.5 24 12.5 , `opts') ///
-      (function 24, range(12.5 17.5) `opts') ///
-      (pci 24 17.5 18 17.5 , `opts') ///
-      (function 18, range(17.5 22.5) `opts') ///
-      (pci 18 22.5 14.4 22.5 , `opts') ///
-      (function 14.4, range(22.5 27.5) `opts') ///
-      (pci 14.4 27.5 12 27.5 , `opts') ///
-      (function 12, range(27.5 32) `opts') ///
-      (scatteri 12 32 "6 Hour Workday" , m(none) mlabc(gray)) ///
-      (scatteri 12 40  , m(none) mlabc(gray)) ///
-  /// Design options
-  , legend(r(1) on order(1 "Private Non-MBBS" 2 "Private MBBS" 3 "Public MBBS")) ///
+    (function 72, range(3 7.5) `opts') ///
+    (pci 36 7.5 72 7.5 , `opts') ///
+    (function 36, range(7.5 12.5) `opts') ///
+    (pci 36 12.5 24 12.5 , `opts') ///
+    (function 24, range(12.5 17.5) `opts') ///
+    (pci 24 17.5 18 17.5 , `opts') ///
+    (function 18, range(17.5 22.5) `opts') ///
+    (pci 18 22.5 14.4 22.5 , `opts') ///
+    (function 14.4, range(22.5 27.5) `opts') ///
+    (pci 14.4 27.5 12 27.5 , `opts') ///
+    (function 12, range(27.5 32) `opts') ///
+    (scatteri 12 32 "6 Hour Workday" , m(none) mlabc(gray)) ///
+    (scatteri 12 40  , m(none) mlabc(gray)) ///
+  ,  /// Design options
+    legend(r(1) on order(1 "Private Non-MBBS" 2 "Private MBBS" 3 "Public MBBS")) ///
     xtit("Minutes per Patient {&rarr}")  ytit("Patients per Provider Day") ///
     xlab(5 ":05" 10 ":10" 15 ":15" 20 ":20" 25 ":25" 30 ":30+" , notick)
 
 		graph export "${outputs}/f4-capacity.eps" , replace
 
 // Figure 5: MBBS - IP Quality correlations ----------------------------------------------------
-
-  use "${directory}/Constructed/M2_Vignettes.dta" ///
-     if provtype == 1 | provtype == 6, clear
-
-  gen count = 1
+use "${directory}/Constructed/M2_Vignettes.dta" ///
+  if provtype == 1 | provtype == 6, clear
 
   // Get graphing points
+  gen count = 1
   collapse (sum) count (mean) mean = theta_mle (sem) sem = theta_mle , by(mbbs statename)
     gen ul = mean + 1.96*sem
     gen ll = mean - 1.96*sem
@@ -201,10 +201,7 @@
       replace n = n + `x' in `i'
       local ++y
       if `y' == 2 {
-        local ++x
-        local ++x
-        local ++x
-        local ++x
+        local x = `x' + 4
         local y = 0
       }
     }
@@ -227,7 +224,6 @@
 		graph export "${outputs}/f5-mbbs-ip-quality.eps" , replace
 
 // Figure 6: Quality cutoffs -------------------------------------------------------------------
-
 use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
   egen total = rsum(type_?)
@@ -291,8 +287,7 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
   end
 
 // Figure 7: Status quo cost and quality -------------------------------------------------------
-
-  use "${directory}/Constructed/M1_providers-simulations.dta", clear
+use "${directory}/Constructed/M1_providers-simulations.dta", clear
   pq Status Quo
 
   dlab treat ///
@@ -311,8 +306,7 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
   save "${directory}/constructed/sim-status-quo.dta" , replace
 
 // Figure 8: AYUSH into public sector ----------------------------------------------------------
-
-  use "${directory}/Constructed/M1_providers-simulations.dta", clear
+use "${directory}/Constructed/M1_providers-simulations.dta", clear
 
   gen ppd_old = ppd // Preserve old costs
 
@@ -352,8 +346,7 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
   graph export "${outputs}/f8-public-ayush.eps" ,  replace
 
 // Figure 9: Build out public sector -----------------------------------------------------------
-
-  use "${directory}/Constructed/M1_providers-simulations.dta", clear
+use "${directory}/Constructed/M1_providers-simulations.dta", clear
 
   gen ppd_old = ppd // Preserve old costs
 
@@ -401,7 +394,6 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 // ---------------------------------------------------------------------------------------------
 
 // Table 1: Village accessibility to provider types, by state ----------------------------------
-
 use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
   // Add public + private
@@ -495,7 +487,7 @@ use "${directory}/Constructed/M2_Vignettes.dta" ///
   if (provtype == 1 | provtype == 6) & (public == 1), clear
 
   collapse (mean) pcomp = theta_mle , by(uniqdistid)
-     label var pcomp "Mean District Public Competence"
+    label var pcomp "Mean District Public Competence"
 
   tempfile dist
     save `dist' , replace
