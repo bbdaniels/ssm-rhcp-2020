@@ -30,6 +30,10 @@ use "${datadir}/Data/Raw/Maqari1/Household_data2.dta" , clear
   label var adultprieduc "Adult primary education"
 
   replace statename = proper(statename)
+    replace statename = "Odisha" if statename == "Orissa"
+    replace statename = "Tamil Nadu" if statename == "Tamilnadu"
+    replace statename = "Chhattisgarh" if statename == "Chattisgarh"
+    replace statename = "Maharashtra" if statename == "Maharastra"
 
   drop s3q2
 
@@ -364,14 +368,15 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
     gen ppd2 = patients if anypub == 1
 
   // Weighting
-  qui elasticnet linear vignette ///
+  isid uid , sort
+  version 13
+  elasticnet linear vignette ///
     private mbbs male s3q11_* otherjob_none age ///
     patients fees_total s2q16 ///
-    i.s3q4 i.s3q5 i.s2q20a i.s3q2
+    i.s3q4 i.s3q5 i.s2q20a i.s3q2 ///
+  , rseed(489582) // random.org Timestamp: 2020-01-22 20:33:08 UTC
 
-    // s3q4 s3q5 s2q20a s3q2
-
-    lassoselect id = `e(ID_sel)'
+    lassoselect id = `e(ID_cv)'
       local covars = "`e(othervars_sel)'"
     reg vignette `covars'
       predict completion
@@ -393,13 +398,17 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
 // Get vignettes data
 
-  use "${datadir}/Constructed/M2_Vignettes.dta"
+  use "${datadir}/Constructed/M2_Vignettes.dta" , clear
+    replace statename = "Odisha" if statename == "Orissa"
+    replace statename = "Tamil Nadu" if statename == "Tamilnadu"
+    replace statename = "Chhattisgarh" if statename == "Chattisgarh"
+    replace statename = "Maharashtra" if statename == "Maharastra"
   dataset "${directory}/Constructed/M2_Vignettes.dta"
 
-  use "${datadir}/Constructed/M2_Vignettes_long.dta"
+  use "${datadir}/Constructed/M2_Vignettes_long.dta" , clear
   dataset "${directory}/Constructed/M2_Vignettes_long.dta"
 
-  use "${datadir}/Data/Raw/Maqari1/Combined_vignettes3.dta"
+  use "${datadir}/Data/Raw/Maqari1/Combined_vignettes3.dta" , clear
   dataset "${directory}/Constructed/Combined_vignettes3.dta"
 
 // PHC data

@@ -450,6 +450,18 @@
 	newpath
 	Lcr
 } def
+/Sbpa {
+	newpath
+} def
+/Sepa {
+	Slw setlinewidth
+	Slrgb setrgbcolor
+	currentlinejoin
+	1 setlinejoin
+	S
+	setlinejoin
+	newpath
+} def
 /Stransrot {
 	/anglep exch def
 	yratio mul
@@ -578,15 +590,17 @@
 30390 5362 31045 5686 1 1 Srect
 /Slw 1.296 def
 /Slrgb {0.565 0.208 0.231} def
+Sbpa
 12296 14470 Sm
-17239 17861 Sl
-17239 17861 Sm
-22183 21253 Sl
+17239 17861 SPl
+22183 21253 SPl
+Sepa
 /Slrgb {0.102 0.278 0.435} def
+Sbpa
 12296 10038 Sm
-17239 9468 Sl
-17239 9468 Sm
-22183 8897 Sl
+17239 9468 SPl
+22183 8897 SPl
+Sepa
 /Slrgb {0.000 0.000 0.000} def
 /Ssrgb {0.000 0.000 0.000} def
 12296 14714 113 0 1 Scc 

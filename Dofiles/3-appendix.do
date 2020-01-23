@@ -64,13 +64,13 @@ use "${directory}/Constructed/M2_Vignettes.dta" ///
         4 "4th Quintile" 5 "Highest Quintile"
       lab val quintile quintile
 
-    egen diarrhea_freq = rmin(c3h3 c4h3)
-    egen diarrhea_treat = rmin(treat3 treat4)
-    egen diarrhea_correct = rmin(correct3 correct4)
+    egen diarrhea_freq = rmin( c3h3 c4h3 )
+    egen diarrhea_treat = rmin( treat3 treat4 )
+    egen diarrhea_correct = rmin( correct3 correct4 )
 
 
     labelcollapse ///
-      theta_mle c1e9 correct1 treat1 c2h4 c2e5  correct2 treat2 diarrhea_freq diarrhea_correct diarrhea_treat ///
+      theta_mle c1e9 correct1 treat1 c2h4 c2e5 correct2 treat2 diarrhea_freq diarrhea_correct diarrhea_treat ///
     , by(quintile)
 
     label var theta_mle "Average Knowledge Score"
@@ -84,7 +84,6 @@ use "${directory}/Constructed/M2_Vignettes.dta" ///
     label var c1e9 "TB: Order Sputum AFB Test"
     label var c2h4 "Pre-eclampsia: Ask Swelling in Feet"
     label var c2e5 "Pre-eclampsia: Check Edema in Feet"
-    label var antibiotic "Used antibiotics in any case"
 
     export excel ///
       using "${outputsa}/t-theta.xlsx" , replace first(varl)
@@ -261,22 +260,23 @@ use "${directory}/Constructed/M1_Villages_prov0.dta" , clear
   }
 
   // Graph counts
-  local opts lc(white) lw(none) la(center)
+  local opts  lc(black) lp(solid) lw(vthin) la(center) fc("0 109 219")
+  local opts2 lc(black) lp(solid) lw(vthin) la(center) fc("146 0 0")
 
   graph bar (mean) type_?0 type_?1  [pweight = weight_psu]  ///
-  , over(private, gap(*0) label(labsize(tiny))) ///
+  , over(private, gap(*.5) label(labsize(tiny))) ///
     over(state_code , gap(*.5) label(labsize(vsmall)) sort((mean) u5mr) ) ///
     stack hor yscale(noline) ///
-    $graph_opts_1 ysize(6) ///
+    $graph_opts_1 ysize(6) xoverhang ///
     ytit("Providers per Village {&rarr}" , placement(left) justification(left))  ///
     legend(on ring(1) pos(7) r(2) size(small) symysize(small) symxsize(small) ///
-      order(13 "Public:"  1 "MBBS" 2 "AYUSH" 3 "Other" 4 "Unknown"  ///
-            13 "Private:" 5 "MBBS" 6 "AYUSH" 7 "Other" 8 "Unknown") ///
+     order(13 "Public:"  1 "MBBS" 2 "AYUSH" 3 "Other" 4 "Unknown"  ///
+           13 "Private:" 5 "MBBS" 6 "AYUSH" 7 "Other" 8 "Unknown") ///
     ) ///
-    bar(1, fc(navy) fi(100) `opts') bar(2, fc(navy) fi(75) `opts') ///
-    bar(3, fc(navy) fi(50) `opts') bar(4, fc(navy) fi(25) `opts') ///
-    bar(5, fc(maroon) fi(100) `opts') bar(6, fc(maroon) fi(75) `opts') ///
-    bar(7, fc(maroon) fi(50) `opts') bar(8, fc(maroon) fi(25) `opts')
+    bar(1, fi(100) `opts') bar(2, fi(75) `opts') ///
+    bar(3, fi(50) `opts') bar(4, fi(25) `opts') ///
+    bar(5, fi(100) `opts2') bar(6, fi(75) `opts2') ///
+    bar(7, fi(50) `opts2') bar(8,  fi(25) `opts2')
 
     graph export "${outputsa}/f-paramedical.eps" , replace
 
@@ -312,10 +312,10 @@ use "${directory}/Constructed/M2_Vignettes.dta" ///
 
 // Figure 3: Clinic visits within own village (HH Survey) --------------------------------------
 use "${directory}/Constructed/M1_households.dta" ///
-  if (s4q3==1) & (s4q4==1) /// Only primary medical care
+  if ( s4q3 ==1) & ( s4q4 ==1) /// Only primary medical care
   , clear
 
-  gen priv = (s4q5>=5 & s4q5<=7 )
+  gen priv = ( s4q5 >=5 & s4q5 <=7 )
 
   gen invil = (s4q6 == 1 | s4q6 == 2) if !missing(s4q6)
   replace statename = proper(statename)
@@ -394,6 +394,8 @@ use "${directory}/Constructed/M1_providers.dta" if private == 1 | mbbs == 1 , cl
   collapse (mean) theta_mle state_code, by(dmses) fast
     merge m:1 state_code using `state' , keep(3)
 
+  isid theta_mle , sort
+
   tw (lpolyci theta_mle dmses)(scatter theta_mle dmses if theta_mle < 2) ///
   ,  ///
     xtit("District SES") ytit("Mean Public Competence")
@@ -441,15 +443,15 @@ collapse (mean) mbbs theta_mle , by(state_code)
   use "${directory}/Constructed/M2_Vignettes.dta" ///
     if provtype == 1 | provtype == 6, clear
 
-  reg theta_mle mbbs#i.state_code
+  encode statename , gen(state)
+  reg theta_mle mbbs#i.state
 
-    margins state_code , dydx(mbbs)
+    margins state , dydx(mbbs)
     marginsplot , title("") horizontal ///
       plotopts(connect(none) yscale(reverse) ytit("") ///
         xtit("MBBS difference within state (SDs)") xline(0)  ///
         mc(black) msize(med) m(o)) ///
       ciopts(recast(rspike) lc(gs12))
-
 
       graph export "${outputsa}/f-mbbs-statewise.eps" , replace
 
@@ -477,14 +479,16 @@ use "${directory}/Constructed/M1_providers.dta" , clear
     patients fees_total s2q16
 
   // LASSO
+  isid uid , sort
+  version 13
   qui elasticnet linear vignette ///
     priv mbbs male s3q11_* otherjob_none age ///
     patients fees_total s2q16 ///
-    i.s3q4 i.s3q5 i.s2q20a i.s3q2
+    i.s3q4 i.s3q5 i.s2q20a i.s3q2 ///
+  , rseed(489582) // random.org Timestamp: 2020-01-22 20:33:08 UTC
 
-    // s3q4 s3q5 s2q20a s3q2
 
-    lassoselect id = `e(ID_sel)'
+    lassoselect id = `e(ID_cv)'
       local covars = "`e(othervars_sel)'"
     reg vignette `covars'
       est sto Completion

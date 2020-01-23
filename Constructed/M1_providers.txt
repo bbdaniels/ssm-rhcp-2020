@@ -1,10 +1,8 @@
 
 Variable       Obs Unique       Mean       Min       Max  Label
--------------------------------------------------------------------------------------------------------------------------------------------------------
-serial        4320   4039   1.20e+07  1.20e+07  1.30e+07  serial number
+-----------------------------------------------------------------------------------------------
 stateid       4335     19   11.00092         1        19  state id
 statename     4335     19          .         .         .  state name
-districtname  4335    233          .         .         .  district name
 villid        4335     88   42.65306         1        88  village id
 finclinid     4335   4036   1.11e+08   3100669  1.91e+08  clinic id 2
 provtype      4335      2   1.790081         1         6  Provider Type
@@ -21,7 +19,6 @@ s3q2          3474      6   2.207542         1         6  birthplace
 s3q4          3473      5   3.130147         1         5  caste
 s3q5          3474      6   1.327288         1         6  religion
 s3q11         3468      3   2.019608         1         3  education
-clinicserial  4274     37   6.014038         0        89  serial number
 finclinid_~w  4335   4035   1.11e+08  1.02e+07  1.91e+08  Clinic ID
 finprovid_~w  4335   4236   1.11e+10  1.02e+09  1.91e+10  Clinic ID
 nosurvey      4335      2   .1988466         0         1  Not Surveyed
@@ -39,10 +36,7 @@ age           3446     71   40.37174        15        89  Age
 male          3472      2   .8945853         0         1  Providers Who: Are Male
 otherjob_n~e  3473      2   .6665707         0         1  Have No Other Occupation
 medincome     3399    176   5625.406         0    600000  Medical Income
-totalincome   3399    266   6839.861         0    600000  Total Income
 degreetype    3499      3   1.392684         1         3  Degree Type
-sum_infra     3439     12   6.359988         0        11  Infrastructure
-asha          4335      1          0         0         0  ASHA
 provider      4335      2   .8207612         0         1  is a medical provider
 mbbs          3499      2   .0754501         0         1  Have MBBS degree
 ayush         3499      2   .2332095         0         1  Have AYUSH degree
@@ -67,7 +61,7 @@ c1h1          1895      2   .1477573         0         1  C1 Item 1: Night Sweat
 rel11         1895      2   .3398417         0         1  C1 Item 2: Blood in Sputum
 c1h3          1895      2   .1229551         0         1  C1 Item 3: Chest Pain
 c1h4          1895      2   .0986807         0         1  C1 Item 4: Happened Before
-c1h5          1895      2   .0881266         0         1  C1 Item 5: Happened to Others in Family
+c1h5          1895      2   .0881266         0         1  C1 Item 5: Happened to Others in F...
 c1h6          1895      2   .0158311         0         1  C1 Item 6: High Risk Sex
 c1e2          1895      2   .1124011         0         1  C1 Item 9: Respiratory Rate
 c1e3          1895      2   .2633245         0         1  C1 Item 10: Blood Pressure
@@ -96,7 +90,7 @@ c2h15         1863      2   .0633387         0         1  C2 Item 33: Anemia
 c2h16         1863      2   .0225443         0         1  C2 Item 34: History of Heart Disease
 c2h17         1863      2   .0166398         0         1  C2 Item 35: Inherited Disease
 c2h18         1863      2   .0552872         0         1  C2 Item 36: Shortness of Breath
-c2h19         1863      2     .15781         0         1  C2 Item 37: Swelling in Ankles How Long
+c2h19         1863      2     .15781         0         1  C2 Item 37: Swelling in Ankles How...
 c2e2          1863      2   .1154053         0         1  C2 Item 39: Respiratory Rate
 rel2          1863      2   .4600107         0         1  C2 Item 40: Blood Pressure
 c2e4          1863      2   .0660225         0         1  C2 Item 41: Auscultation
@@ -118,7 +112,7 @@ c3e4          1130      2   .0681416         0         1  C3 Item 58: Mucous Mem
 c3e5          1130      2   .0548673         0         1  C3 Item 59: Tears
 c3e6          1130      2   .0610619         0         1  C3 Item 60: Skin Color and Turgor
 c3e7          1130      2   .0814159         0         1  C3 Item 61: Palpation of Abdomen
-c3e8          1130      2   .0300885         0         1  C3 Item 62: Depression of Skull Fontanel
+c3e8          1130      2   .0300885         0         1  C3 Item 62: Depression of Skull Fo...
 c3e9          1130      2   .0221239         0         1  C3 Item 63: Blood Serum Electrolytes
 c4h1          1067      2   .2296157         0         1  C4 Item 65: Fever
 c4h2          1067      2   .3336457         0         1  C4 Item 66: Vomiting
@@ -131,26 +125,29 @@ c4e4          1067      2    .059044         0         1  C4 Item 73: Mucous Mem
 c4e5          1067      2   .0431115         0         1  C4 Item 74: Tears
 c4e6          1067      2    .049672         0         1  C4 Item 75: Skin Color and Turgor
 c4e7          1067      2   .0749766         0         1  C4 Item 76: Palpation of Abdomen
-c4e8          1067      2   .0262418         0         1  C4 Item 77: Depression of Skull Fontanel
+c4e8          1067      2   .0262418         0         1  C4 Item 77: Depression of Skull Fo...
 c4e9          1067      2   .0121837         0         1  C4 Item 78: Blood Serum Electrolytes
 correct1      1849      2   .6500811         0         1  Provide correct diagnose for TB
-correct2      1726      2   .4078795         0         1  Provide correct diagnose for preeclampsia
+correct2      1726      2   .4078795         0         1  Provide correct diagnose for preec...
+correct3       924      2   .7478355         0         1  Provide correct diagnose for diarrhea
+correct4       869      2   .4177215         0         1  Provide correct diagnose for dysen...
 c1med_total   1904      7   1.721113         0         6  Number of medicines prescribed for TB
-c2med_total   1904      7   1.192227         0         6  Number of medicines prescribed for preeclampsia
-c3med_total    949      7    2.12961         0         6  Number of medicines prescribed for diarrhea
-c4med_total    892      7    2.23991         0         6  Number of medicines prescribed for dysentery
-public        1904      2   .1108193         0         1  Public provider (PHC/CHC or village public)
+c2med_total   1904      7   1.192227         0         6  Number of medicines prescribed for...
+c3med_total    949      7    2.12961         0         6  Number of medicines prescribed for...
+c4med_total    892      7    2.23991         0         6  Number of medicines prescribed for...
+public        1904      2   .1108193         0         1  Public provider (PHC/CHC or villag...
 c1antb        1904      2   .2573529         0         1  Prescribed antibiotics for TB
-c2antb        1904      2   .0582983         0         1  Prescribed antibiotics for preeclampsia
+c2antb        1904      2   .0582983         0         1  Prescribed antibiotics for preecla...
 c3antb         949      2   .5152792         0         1  Prescribed antibiotics for diarrhea
 c4antb         892      2   .5459641         0         1  Prescribed antibiotics for dysentery
-antibiotic    1904      2   .6097689         0         1  Prescribed antibiotics in at least one case
 c1steroid     1904      2   .1055672         0         1  Prescribed steroids for TB
 c2steroid     1904      2   .0903361         0         1  Prescribed steroids for preeclampsia
 c3steroid      949      2   .0168599         0         1  Prescribed steroids for diarrhea
 c4steroid      892      2   .0358744         0         1  Prescribed steroids for dysentery
-treat1        1875      2   .5653333         0         1  Provided correct case management for TB
-treat2        1731      2   .3558637         0         1  Provided correct case management for preeclampsia
+treat1        1875      2   .5653333         0         1  Provided correct case management f...
+treat2        1731      2   .3558637         0         1  Provided correct case management f...
+treat4         874      2   .6601831         0         1  Provided correct case management f...
+treat3         928      2   .6627155         0         1  Provided correct case management f...
 dmses         1904    178   1.290246  .2987948  2.373863  District mean of household SES index
 treat_n       1897      5   .5316289         0         1  Correct Treatments
 diag_n        1886      5   .5531106         0         1  Correct Diagnoses
@@ -159,4 +156,4 @@ uid           4335   4335       2168         1      4335  UID
 theta_mle     1701   1510  -.0013189  -4.39023   3.15752  Theta (MLE)
 theta_pct     1701    100   .5045855       .01         1  100 quantiles of theta_mle
 vignette      4335      2   .3923875         0         1  Completed Vignette
--------------------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------

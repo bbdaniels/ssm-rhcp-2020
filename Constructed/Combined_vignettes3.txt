@@ -1,12 +1,12 @@
 
 Variable       Obs Unique      Mean       Min       Max  Label
--------------------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
 stateid       7861     19  9.968961         1        19  State ID
 c1h1          7843      2  .2060436         0         1  C1 Item 1: Night Sweats
 rel11         7843      2  .4825959         0         1  C1 Item 2: Blood in Sputum
 c1h3          7843      2  .1758256         0         1  C1 Item 3: Chest Pain
 c1h4          7843      2  .1670279         0         1  C1 Item 4: Happened Before
-c1h5          7843      2  .1837307         0         1  C1 Item 5: Happened to Others in Family
+c1h5          7843      2  .1837307         0         1  C1 Item 5: Happened to Others in Fa...
 c1h6          7843      2   .059416         0         1  C1 Item 6: High Risk Sex
 c1e2          7843      2  .1648604         0         1  C1 Item 9: Respiratory Rate
 c1e3          7843      2  .3271707         0         1  C1 Item 10: Blood Pressure
@@ -35,7 +35,7 @@ c2h15         7749      2  .1118854         0         1  C2 Item 33: Anemia
 c2h16         7749      2  .0531682         0         1  C2 Item 34: History of Heart Disease
 c2h17         7749      2  .0530391         0         1  C2 Item 35: Inherited Disease
 c2h18         7749      2  .0748484         0         1  C2 Item 36: Shortness of Breath
-c2h19         7749      2  .2441605         0         1  C2 Item 37: Swelling in Ankles How Long
+c2h19         7749      2  .2441605         0         1  C2 Item 37: Swelling in Ankles How ...
 c2e2          7749      2  .1778294         0         1  C2 Item 39: Respiratory Rate
 rel2          7749      2  .7373855         0         1  C2 Item 40: Blood Pressure
 c2e4          7749      2  .1098206         0         1  C2 Item 41: Auscultation
@@ -57,7 +57,7 @@ c3e4          4034      2  .1103123         0         1  C3 Item 58: Mucous Memb
 c3e5          4034      2  .0991572         0         1  C3 Item 59: Tears
 c3e6          4034      2  .1331185         0         1  C3 Item 60: Skin Color and Turgor
 c3e7          4034      2  .1462568         0         1  C3 Item 61: Palpation of Abdomen
-c3e8          4034      2  .0845315         0         1  C3 Item 62: Depression of Skull Fontanel
+c3e8          4034      2  .0845315         0         1  C3 Item 62: Depression of Skull Fon...
 c3e9          4034      2  .0642043         0         1  C3 Item 63: Blood Serum Electrolytes
 c4h1          4200      2  .3369048         0         1  C4 Item 65: Fever
 c4h2          4200      2  .4207143         0         1  C4 Item 66: Vomiting
@@ -70,43 +70,43 @@ c4e4          4200      2      .125         0         1  C4 Item 73: Mucous Memb
 c4e5          4200      2  .1083333         0         1  C4 Item 74: Tears
 c4e6          4200      2  .1461905         0         1  C4 Item 75: Skin Color and Turgor
 c4e7          4200      2  .1614286         0         1  C4 Item 76: Palpation of Abdomen
-c4e8          4200      2  .0895238         0         1  C4 Item 77: Depression of Skull Fontanel
+c4e8          4200      2  .0895238         0         1  C4 Item 77: Depression of Skull Fon...
 c4e9          4200      2  .0659524         0         1  C4 Item 78: Blood Serum Electrolytes
 practype      7861      2  1.232922         1         2  Government or Private
 provtype      7787      6  1.917041         1         6  Provider Type
 degreetype    7375      3  1.585085         1         3  Degree Type
 male          7311      2  .5056764         0         1  Provider is male
-sum_infra     7861     12  8.208498         0        11  Infrastructure
 villid        2629     88  41.83035         1        88  Village ID
 finclinid_~w  2629   2458  1.09e+08  1.01e+07  1.91e+08  Village sample clinic ID
 finprovid_~w  2629   2545  1.09e+10  1.01e+09  1.91e+10  Village sample provider ID
 correct1      7641      2  .8802513         0         1  Provide correct diagnose for TB
-correct2      7332      2  .7405892         0         1  Provide correct diagnose for preeclampsia
+correct2      7332      2  .7405892         0         1  Provide correct diagnose for preecl...
+correct3      3670      2  .8784741         0         1  Provide correct diagnose for diarrhea
+correct4      3840      2  .5854167         0         1  Provide correct diagnose for dysentery
 c1med_total   7861      7  1.508587         0         6  Number of medicines prescribed for TB
-c2med_total   7861      7  .9847348         0         6  Number of medicines prescribed for preeclampsia
-c3med_total   3765      7  1.862948         0         6  Number of medicines prescribed for diarrhea
-c4med_total   3976      7    1.9917         0         6  Number of medicines prescribed for dysentery
+c2med_total   7861      7  .9847348         0         6  Number of medicines prescribed for ...
+c3med_total   3765      7  1.862948         0         6  Number of medicines prescribed for ...
+c4med_total   3976      7    1.9917         0         6  Number of medicines prescribed for ...
 age           7284     73  38.20071        11       109  Age
-s3q12a        7156     12  6.115148         0        12  
-public        7861      2   .767078         0         1  Public provider (PHC/CHC or village public)
+public        7861      2   .767078         0         1  Public provider (PHC/CHC or village...
 weight_psu    7861    102  489291.9  68528.98   2016045  Weight
 uniqdistid    7861    190  9975.147      1001     19010  District ID
 c1antb        7861      2  .1208498         0         1  Prescribed antibiotics for TB
-c2antb        7861      2  .0256965         0         1  Prescribed antibiotics for preeclampsia
+c2antb        7861      2  .0256965         0         1  Prescribed antibiotics for preeclam...
 c3antb        3765      2  .4573705         0         1  Prescribed antibiotics for diarrhea
 c4antb        3976      2  .5243964         0         1  Prescribed antibiotics for dysentery
-antibiotic    7861      2  .5407709         0         1  Prescribed antibiotics in at least one case
 c1steroid     7861      2  .0315481         0         1  Prescribed steroids for TB
 c2steroid     7861      2  .0382903         0         1  Prescribed steroids for preeclampsia
 c3steroid     3765      2  .0077025         0         1  Prescribed steroids for diarrhea
 c4steroid     3976      2  .0118209         0         1  Prescribed steroids for dysentery
-treat1        7770      2  .8101673         0         1  Provided correct case management for TB
-treat2        7214      2  .6684225         0         1  Provided correct case management for preeclampsia
+treat1        7770      2  .8101673         0         1  Provided correct case management fo...
+treat2        7214      2  .6684225         0         1  Provided correct case management fo...
+treat4        3873      2  .8843274         0         1  Provided correct case management fo...
+treat3        3683      2  .8718436         0         1  Provided correct case management fo...
 private       7861      2   .232922         0         1  Private provider
 dmses         7847    187  1.286395  .2987948  2.373863  District mean of household SES index
 smses         7861     19  1.273146  .5943771  2.106291  State mean of household SES index
-perform       7861      2  1.550312         1         2  State performance category by SES
 mbbs          7375      2  .2417627         0         1  Has MBBS degree
 ayush         7375      2  .1015593         0         1  Has AYUSH degree
 othernone     7375      2   .656678         0         1  Has neither MBBS nor AYUSH
--------------------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
