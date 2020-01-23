@@ -260,7 +260,8 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
         2 "Villages with MBBS providers" ///
         3 "Villages with providers better than state average MBBS" ///
         4 "Villages with providers better than national average MBBS")) ///
-    ylab(${pct}) ytit("Proportion of villages {&rarr}") yscale(r(0) noline) noextendline ysize(6)
+    ylab(${pct}) ytit("Proportion of villages {&rarr}") yscale(r(0) noline) ///
+    legend(region(lc(none) fc(none))) noextendline ysize(6)
 
     graph export "${outputs}/f6-quality-regulation.eps" ,  replace
 
