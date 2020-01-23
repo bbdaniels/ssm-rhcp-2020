@@ -55,7 +55,7 @@ use "${directory}/Constructed/M1_providers.dta" ///
 		male s3q11_* otherjob_none age_* ///
 		[pweight = weight_psu]  ///
 		, se ${graph_opts} graph barlab xlab(${pct}) over(mbbs) ///
-    barlook(1 fc(gs16) `opts' 2 fc(gs8) `opts' 3 fc(gs0) `opts' ) ///
+    barlook(1 fc(gs16) `opts' 2 fc(gs12) `opts' 3 fc(gs8) `opts' ) ///
 		legend(on r(1) order(1 "Public MBBS" 3 "Private MBBS" 5 "Private Non-MBBS" ) ///
       symxsize(small) symysize(small)) ///
 		yscale(noline) xscale(noline) xsize(6) legend(on)
