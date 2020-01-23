@@ -209,8 +209,8 @@
     , x(theta_mle) range(-3(1)2) lab(-4) p
 	tw ///
     (rcap ll ul n , lw(thin) lc(black) hor) ///
-    (scatter n mean if mbbs == 0, mc(maroon) m(.) msize(med)) ///
-    (scatter n mean if mbbs == 1, mc(navy) m(.) msize(med)) ///
+    (scatter n mean if mbbs == 0, mc(white) mlc(black) mlw(thin) m(s) msize(med)) ///
+    (scatter n mean if mbbs == 1, mc(black) m(.) mlw(none) msize(medsmall)) ///
     (scatter pos2 pos if mbbs == 1, mlabpos(3) m(none) ml(statename) mlabc(black)) ///
   , yscale(off) xlab(-4.5 " " `r(theLabels)', labsize(small)) ysize(6) ///
     legend(on size(small) order (2 "Non-MBBS" 3 "MBBS") ring(0) pos(5) c(1))
@@ -281,7 +281,7 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
      gen case = "`anything'"
   end
 
-// Figure 6: Status quo cost and quality -------------------------------------------------------
+// Figure 7: Status quo cost and quality -------------------------------------------------------
 
   use "${directory}/Constructed/M1_providers-simulations.dta", clear
   pq Status Quo
