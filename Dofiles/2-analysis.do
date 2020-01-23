@@ -177,7 +177,7 @@ use "${directory}/Constructed/M1_providers.dta" ///
     legend(r(1) on order(1 "Private Non-MBBS" 2 "Private MBBS" 3 "Public MBBS")) ///
     xtit("Minutes per Patient {&rarr}")  ytit("Patients per Provider Day") ///
     xlab(5 ":05" 10 ":10" 15 ":15" 20 ":20" 25 ":25" 30 ":30+" , notick) ///
-    legend(region(lc(none) fc(none)))
+    legend(region(lc(none) fc(none))) xtit(,placement(left) justification(left))
 
 		graph export "${outputs}/f4-capacity.eps" , replace
 
@@ -220,7 +220,8 @@ use "${directory}/Constructed/M2_Vignettes.dta" ///
     (scatter n mean if mbbs == 1, mc(black) m(.) mlw(none) msize(medsmall)) ///
     (scatter pos2 pos if mbbs == 1, mlabpos(3) m(none) ml(statename) mlabc(black)) ///
   , yscale(off) xlab(-4.5 " " `r(theLabels)', labsize(small)) ysize(6) ///
-    legend(on size(small) order (2 "Non-MBBS" 3 "MBBS") ring(0) pos(5) c(1))
+    legend(on size(small) order (2 "Non-MBBS" 3 "MBBS") ring(0) pos(5) c(1)) ///
+    xtit("{&larr} Average Provider Competence {&rarr}")
 
 		graph export "${outputs}/f5-mbbs-ip-quality.eps" , replace
 
@@ -261,7 +262,8 @@ use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
         3 "Villages with providers better than state average MBBS" ///
         4 "Villages with providers better than national average MBBS")) ///
     ylab(${pct}) ytit("Proportion of villages {&rarr}") yscale(r(0) noline) ///
-    legend(region(lc(none) fc(none))) noextendline ysize(6)
+    legend(region(lc(none) fc(none))) noextendline ysize(6) ///
+    ytit(,placement(left) justification(left))
 
     graph export "${outputs}/f6-quality-regulation.eps" ,  replace
 
@@ -300,7 +302,7 @@ use "${directory}/Constructed/M1_providers-simulations.dta", clear
     (function y=3^((x+2))+20 , ra(-1 1) lp(dash) lc(black)) ///
     (function y=3^((x+1.5))+10 , ra(-.5 1.5) lp(dash) lc(black)) ///
     (scatter cpp theta_mle , m(none) mlab(state_code) mlabc(black) mlabpos(0)) ///
-  , xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
+  , xtit("{&larr} Average Interaction Provider Competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
     yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
 
      graph export "${outputs}/f7-status-quo.eps" ,  replace
@@ -342,7 +344,7 @@ use "${directory}/Constructed/M1_providers-simulations.dta", clear
     (pcarrow  cpp2 theta_mle2 cpp1 theta_mle1 , lc(black) mc(black)) ///
     (scatter cpp1 theta_mle1 , m(none) mlab(state_code) mlabpos(12) mlabc(black)) ///
   , legend(on order(1 "Policy: Public AYUSH") ring(0) pos(11) textfirst) ///
-    xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
+    xtit("{&larr} Average Interaction Provider Competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
      yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
 
   graph export "${outputs}/f8-public-ayush.eps" ,  replace
@@ -386,7 +388,7 @@ use "${directory}/Constructed/M1_providers-simulations.dta", clear
     (pcarrow  cpp2 theta_mle2 cpp1 theta_mle1 , lc(black) mc(black)) ///
     (scatter cpp1 theta_mle1 , m(none) mlab(state_code) mlabpos(12) mlabc(black)) ///
   , legend(on order(1 "Policy: PHCs everywhere") ring(0) pos(11) textfirst) ///
-    xtit("Average interaction doctor competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
+    xtit("{&larr} Average Interaction Provider Competence {&rarr}") ytit("Cost per Patient (Rs.)") ///
      yscale(r(0)) ylab(#6) xlab(`r(theLabels)')
 
      graph export "${outputs}/f9-phcs-everywhere.eps" ,  replace
