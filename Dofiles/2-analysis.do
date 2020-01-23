@@ -143,14 +143,21 @@
   isid uid , sort
   version 13
 
+  gen blank = .
+
   tw ///
+  /// Invisible cheaters for legend
+    (scatter blank blank in 1 , m(.) mc(black) msize(*2)) ///
+    (scatter blank blank in 1 , m(T) mc("0 109 219") msize(*4)) ///
+    (scatter blank blank in 1 , m(S) mc("146 0 0") msize(*4)) ///
+  /// Actual graph points
     (scatter check minpp if private == 1 & mbbs == 0, ///
-        jitter(2) jitterseed(382375) m(.) mc(maroon) msize(*.1)) ///
+        jitter(2) jitterseed(382375) m(.) mc("0 0 0") msize(*.1)) ///
     (scatter check minpp if private == 1 & mbbs == 1, ///
-        jitter(2) jitterseed(382375) m(T) mc(dkgreen) msize(*.4)) ///
+        jitter(2) jitterseed(382375) m(T) mc("0 109 219") msize(*.4)) ///
     (scatter check minpp if private == 0 & mbbs == 1, ///
-        jitter(2) jitterseed(382375) m(O) mc(navy) msize(*.4)) ///
-    /// (function 360/x , range(3 35) lc(gray) lp(solid) lw(vthin)) ///
+        jitter(2) jitterseed(382375) m(S) mc("146 0 0") msize(*.4)) ///
+    /// Reference line
       (function 72, range(3 7.5) `opts') ///
       (pci 36 7.5 72 7.5 , `opts') ///
       (function 36, range(7.5 12.5) `opts') ///
@@ -164,6 +171,7 @@
       (function 12, range(27.5 32) `opts') ///
       (scatteri 12 32 "6 Hour Workday" , m(none) mlabc(gray)) ///
       (scatteri 12 40  , m(none) mlabc(gray)) ///
+  /// Design options
   , legend(r(1) on order(1 "Private Non-MBBS" 2 "Private MBBS" 3 "Public MBBS")) ///
     xtit("Minutes per Patient {&rarr}")  ytit("Patients per Provider Day") ///
     xlab(5 ":05" 10 ":10" 15 ":15" 20 ":20" 25 ":25" 30 ":30+" , notick)
