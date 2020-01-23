@@ -260,22 +260,23 @@ use "${directory}/Constructed/M1_Villages_prov0.dta" , clear
   }
 
   // Graph counts
-  local opts lc(white) lw(none) la(center)
+  local opts  lc(black) lp(solid) lw(vthin) la(center) fc("0 109 219")
+  local opts2 lc(black) lp(solid) lw(vthin) la(center) fc("146 0 0")
 
   graph bar (mean) type_?0 type_?1  [pweight = weight_psu]  ///
-  , over(private, gap(*0) label(labsize(tiny))) ///
+  , over(private, gap(*.5) label(labsize(tiny))) ///
     over(state_code , gap(*.5) label(labsize(vsmall)) sort((mean) u5mr) ) ///
     stack hor yscale(noline) ///
     $graph_opts_1 ysize(6) ///
     ytit("Providers per Village {&rarr}" , placement(left) justification(left))  ///
     legend(on ring(1) pos(7) r(2) size(small) symysize(small) symxsize(small) ///
-      order(13 "Public:"  1 "MBBS" 2 "AYUSH" 3 "Other" 4 "Unknown"  ///
-            13 "Private:" 5 "MBBS" 6 "AYUSH" 7 "Other" 8 "Unknown") ///
+     order(13 "Public:"  1 "MBBS" 2 "AYUSH" 3 "Other" 4 "Unknown"  ///
+           13 "Private:" 5 "MBBS" 6 "AYUSH" 7 "Other" 8 "Unknown") ///
     ) ///
-    bar(1, fc(navy) fi(100) `opts') bar(2, fc(navy) fi(75) `opts') ///
-    bar(3, fc(navy) fi(50) `opts') bar(4, fc(navy) fi(25) `opts') ///
-    bar(5, fc(maroon) fi(100) `opts') bar(6, fc(maroon) fi(75) `opts') ///
-    bar(7, fc(maroon) fi(50) `opts') bar(8, fc(maroon) fi(25) `opts')
+    bar(1, fi(100) `opts') bar(2, fi(75) `opts') ///
+    bar(3, fi(50) `opts') bar(4, fi(25) `opts') ///
+    bar(5, fi(100) `opts2') bar(6, fi(75) `opts2') ///
+    bar(7, fi(50) `opts2') bar(8,  fi(25) `opts2')
 
     graph export "${outputsa}/f-paramedical.eps" , replace
 
