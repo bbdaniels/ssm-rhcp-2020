@@ -176,7 +176,8 @@ use "${directory}/Constructed/M1_providers.dta" ///
   ,  /// Design options
     legend(r(1) on order(1 "Private Non-MBBS" 2 "Private MBBS" 3 "Public MBBS")) ///
     xtit("Minutes per Patient {&rarr}")  ytit("Patients per Provider Day") ///
-    xlab(5 ":05" 10 ":10" 15 ":15" 20 ":20" 25 ":25" 30 ":30+" , notick)
+    xlab(5 ":05" 10 ":10" 15 ":15" 20 ":20" 25 ":25" 30 ":30+" , notick) ///
+    legend(region(lc(none) fc(none)))
 
 		graph export "${outputs}/f4-capacity.eps" , replace
 
