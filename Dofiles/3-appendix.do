@@ -267,7 +267,7 @@ use "${directory}/Constructed/M1_Villages_prov0.dta" , clear
   , over(private, gap(*.5) label(labsize(tiny))) ///
     over(state_code , gap(*.5) label(labsize(vsmall)) sort((mean) u5mr) ) ///
     stack hor yscale(noline) ///
-    $graph_opts_1 ysize(6) ///
+    $graph_opts_1 ysize(6) xoverhang ///
     ytit("Providers per Village {&rarr}" , placement(left) justification(left))  ///
     legend(on ring(1) pos(7) r(2) size(small) symysize(small) symxsize(small) ///
      order(13 "Public:"  1 "MBBS" 2 "AYUSH" 3 "Other" 4 "Unknown"  ///
