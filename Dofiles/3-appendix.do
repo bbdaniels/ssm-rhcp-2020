@@ -442,15 +442,15 @@ collapse (mean) mbbs theta_mle , by(state_code)
   use "${directory}/Constructed/M2_Vignettes.dta" ///
     if provtype == 1 | provtype == 6, clear
 
-  reg theta_mle mbbs#i.state_code
+  encode statename , gen(state)
+  reg theta_mle mbbs#i.state
 
-    margins state_code , dydx(mbbs)
+    margins state , dydx(mbbs)
     marginsplot , title("") horizontal ///
       plotopts(connect(none) yscale(reverse) ytit("") ///
         xtit("MBBS difference within state (SDs)") xline(0)  ///
         mc(black) msize(med) m(o)) ///
       ciopts(recast(rspike) lc(gs12))
-
 
       graph export "${outputsa}/f-mbbs-statewise.eps" , replace
 
