@@ -8,7 +8,8 @@
 
   use "${directory}/Constructed/M1_Villages_prov1.dta" , clear
 
-  local opts lc(white) lw(none) la(center)
+  local opts lc(black) lp(solid) lw(vthin) la(center) fc("0 109 219")
+  local opts2 lc(black) lp(solid) lw(vthin) la(center) fc("146 0 0")
 
   expand 2 , gen(false)
     replace state_code = 0 if false == 1
@@ -24,7 +25,7 @@
   }
 
   graph bar (mean) type_?0 type_?1  [pweight = weight_psu]  ///
-  , over(private, gap(*0) label(labsize(tiny))) ///
+  , over(private, gap(*.5) label(labsize(tiny))) ///
     over(state_code , gap(*.5) label(labsize(vsmall)) sort((mean) u5mr) ) ///
     stack hor yscale(noline) ///
     $graph_opts_1 ysize(6) ///
@@ -33,10 +34,10 @@
      order(13 "Public:"  1 "MBBS" 2 "AYUSH" 3 "Other" 4 "Unknown"  ///
            13 "Private:" 5 "MBBS" 6 "AYUSH" 7 "Other" 8 "Unknown") ///
     ) ///
-    bar(1, fc(navy) fi(100) `opts') bar(2, fc(navy) fi(75) `opts') ///
-    bar(3, fc(navy) fi(50) `opts') bar(4, fc(navy) fi(25) `opts') ///
-    bar(5, fc(maroon) fi(100) `opts') bar(6, fc(maroon) fi(75) `opts') ///
-    bar(7, fc(maroon) fi(50) `opts') bar(8, fc(maroon) fi(25) `opts')
+    bar(1, fi(100) `opts') bar(2, fi(75) `opts') ///
+    bar(3, fi(50) `opts') bar(4, fi(25) `opts') ///
+    bar(5, fi(100) `opts2') bar(6, fi(75) `opts2') ///
+    bar(7, fi(50) `opts2') bar(8,  fi(25) `opts2')
 
     graph export "${outputs}/f1-counts.eps" , replace
 
@@ -46,13 +47,13 @@
 	replace mbbs = 2 if private == 0 & mbbs == 1
 	replace mbbs = 0 if private == 1 & mbbs != 1
 
-  local opts lc(white) lw(thin) la(center) fi(100)
+  local opts lc(black) lw(thin) la(center) fi(100)
 
 	weightab ///
 		male s3q11_* otherjob_none age_* ///
 		[pweight = weight_psu]  ///
-		, se $graph_opts graph barlab xlab($pct) over(mbbs) ///
-    barlook(1 fc(navy) `opts' 2 fc(dkgreen) `opts' 3 fc(maroon) `opts' ) ///
+		, se ${graph_opts} graph barlab xlab(${pct}) over(mbbs) ///
+    barlook(1 fc(gs16) `opts' 2 fc(gs8) `opts' 3 fc(gs0) `opts' ) ///
 		legend(on r(1) order(1 "Public MBBS" 3 "Private MBBS" 5 "Private Non-MBBS" ) ///
       symxsize(small) symysize(small)) ///
 		yscale(noline) xscale(noline) xsize(6) legend(on)
